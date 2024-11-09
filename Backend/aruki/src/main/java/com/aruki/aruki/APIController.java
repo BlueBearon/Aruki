@@ -63,7 +63,8 @@ public class APIController {
 
         Map<String, String> result = googleMapsAPIManager.getPlaces(location);
 
-        return new ResponseEntity<>(result, HttpStatus.OK);
+        //return new ResponseEntity<>(result, HttpStatus.OK);
+        return notImplementedOverride();
 
     }
 
@@ -83,8 +84,20 @@ public class APIController {
 
         Map<String, String> result = googleMapsAPIManager.getScore(location);
 
-        return new ResponseEntity<>(result, HttpStatus.OK);
+        //return new ResponseEntity<>(result, HttpStatus.OK);
+        return notImplementedOverride();
 
+    }
+
+
+    /**
+     * This method is used to return a placeholder response for endpoints that have not been implemented yet.
+     * 
+     * @return ResponseEntity<Map<String, String>> - Map containing the status of the API.
+     */
+    private ResponseEntity<Map<String, String>> notImplementedOverride()
+    {
+        return new ResponseEntity<>(Map.of("status", "placeholder"), HttpStatus.OK);
     }
     
 }
