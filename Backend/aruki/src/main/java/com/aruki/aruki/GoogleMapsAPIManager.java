@@ -217,7 +217,7 @@ public class GoogleMapsAPIManager {
      * @param places - The list of places in the location
      * @return double - The overall walkability score of the location
      */
-    private double calculateOverallScore(List<Location> places) {
+    public double calculateOverallScore(List<Location> places) {
             
         double score = 0.0;
 
@@ -237,7 +237,7 @@ public class GoogleMapsAPIManager {
      * @param places - The list of places in the location
      * @return Map<String, String> - The walkability score of the location respective to each category of place
      */
-    private Map<String, String> calculateCategoryScores(List<Location> places) {
+    public Map<String, String> calculateCategoryScores(List<Location> places) {
        
         Map<String, String> scores = Map.of();
 

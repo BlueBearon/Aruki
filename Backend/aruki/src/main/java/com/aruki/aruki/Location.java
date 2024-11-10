@@ -45,6 +45,7 @@ public class Location {
         this.googleMapsUniqueID = googleMapsUniqueID;
         this.address = address;
         this.distance = distance;
+        this.walkingDistance = null; // Ensure walkingDistance is null
         this.category = category;
     }
 
