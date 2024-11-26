@@ -1,6 +1,7 @@
 package com.aruki.aruki;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
@@ -9,11 +10,25 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-public class GoogleMapsAPIManager {
+import org.springframework.beans.factory.annotation.Autowired;
+
+public class LocationManager {
 
 
-    //Constants/weights for each category of place
-    private static final Map<String, Double> CATEGORY_CONSTANTS = Map.of("restaurant", 1.0, "school", 1.0, "park", 1.0, "grocery_or_supermarket", 1.0, "gym", 1.0, "library", 1.0, "movie_theater", 1.0, "museum", 1.0, "shopping_mall", 1.0);
+    // Constants/weights for each category of place
+    private static final Map<String, Double> CATEGORY_CONSTANTS = Map.of(
+        "grocery_or_supermarket", 1.5, // Essential for daily living
+        "restaurant", 1.2,            // Regular need but less critical than groceries
+        "park", 1.1,                  // Encourages recreation and health
+        "school", 1.3,                // Critical for families and community
+        "pharmacy", 1.4,              // High priority for health and daily needs
+        "gym", 1.0,                   // Important but not essential
+        "library", 0.9,               // Valuable but situational
+        "shopping_mall", 0.8,         // Adds convenience but non-essential
+        "movie_theater", 0.7,         // Entertainment, lower priority
+        "museum", 0.6                 // Cultural, but less frequent need
+    );
+
 
     private static final double CLOSE_DISTANCE = 0.5;
 
@@ -23,7 +38,10 @@ public class GoogleMapsAPIManager {
 
     private static final double SEARCH_RADIUS = 2.0;
 
-    public GoogleMapsAPIManager() {}
+    @Autowired
+    private APIManager apiManager; //Isolates the Google Maps API calls, so that the LocationManager class is not directly dependent on the Google Maps API. 
+
+    public LocationManager() {}
 
     public Map<String, String> getPlaces(String location) {
         List<Location> places = retrievePlaces(location);
@@ -47,7 +65,7 @@ public class GoogleMapsAPIManager {
         List<Future<List<Location>>> futures = new ArrayList<>();
 
         for (String category : CATEGORY_CONSTANTS.keySet()) {
-            Callable<List<Location>> task = () -> retrievePlacesOfCategory(location, category);
+            Callable<List<Location>> task = () -> apiManager.retrievePlacesOfCategory(location, category, true);
             futures.add(executor.submit(task));
         }
 
@@ -62,16 +80,9 @@ public class GoogleMapsAPIManager {
         executor.shutdown();
 
         // Verify walking distances of places
-        places = verifyWalkingDistances(places);
+        places = verifyWalkingDistances(location, places);
 
         return places;
-    }
-
-    private List<Location> retrievePlacesOfCategory(String location, String category) {
-
-        // Use Google Maps API to retrieve places of the specified category near the location
-        
-        return null;
     }
 
     /**
@@ -84,20 +95,31 @@ public class GoogleMapsAPIManager {
      * @param places
      * @return
      */
-    private List<Location> verifyWalkingDistances(List<Location> places) {
+    private List<Location> verifyWalkingDistances(String originAddress, List<Location> places) {
 
         List<Location> verifiedPlaces = new ArrayList<Location>();
 
         try
         {
 
+            //API Request: Send Origin Address, and each place's address to Google Maps API to get walking distance
+            List<String> placeAddresses = new ArrayList<String>();
             for (Location place : places)
             {
-                Location verifiedPlace = verifyWalkingDistance(place);
+                placeAddresses.add(place.getAddress());
+            }
 
-                if (verifiedPlace != null)
+            List<String> walkingDistances = apiManager.getWalkingDistances(originAddress, placeAddresses, true);
+
+            for (int i = 0; i < places.size(); i++)
+            {
+                Location place = places.get(i);
+                String walkingDistance = walkingDistances.get(i);
+
+                if (Double.parseDouble(walkingDistance) <= SEARCH_RADIUS)
                 {
-                    verifiedPlaces.add(verifiedPlace);
+                    place.setDistance(walkingDistance);
+                    verifiedPlaces.add(place);
                 }
             }
 
@@ -105,26 +127,9 @@ public class GoogleMapsAPIManager {
         }
         catch (Exception e)
         {
-            return null;
+            return places;
         }
 
-    }
-
-    /**
-     * This method verifies the walking distance of a place.
-     * 
-     * This function is necessary as distance as the crow flies often does equal the actual walking distance.
-     * 
-     * If the walking distance is greater than the maximum search radius, the place is not returned, instead null is returned.
-     * 
-     * @param place - The place to verify the walking distance of
-     * @return Location - The place with the verified walking distance
-     */
-    private Location verifyWalkingDistance(Location place) {
-
-        // Use Google Maps Distance Matrix API to verify walking distance of place
-
-        return null;
     }
 
     /**
@@ -138,13 +143,26 @@ public class GoogleMapsAPIManager {
 
         List<Location> places = retrievePlaces(location);
 
+        System.out.println("Checkpoint 1");
+
         // Find overall walking score
         double walkability = calculateOverallScore(places);
+
+        System.out.println("Checkpoint 2");
 
         // Find walking score for each category
         Map<String, String> scores = calculateCategoryScores(places);
 
-        return Map.of("walkability", String.valueOf(walkability), "scores", scores.toString());
+        System.out.println("Checkpoint 3");
+
+        Map<String, String> result = new HashMap<>();
+        result.put("walkability", String.valueOf(walkability));
+        result.put("scores", scores.toString());
+
+
+        System.out.println("Checkpoint 4");
+
+        return result;
 
     }
 
@@ -158,7 +176,7 @@ public class GoogleMapsAPIManager {
      */
     private double calculateLocationScore(Location location)
     {
-        return CATEGORY_CONSTANTS.get(location.getCategory()) * (2 - Double.parseDouble(location.getWalkingDistance()));
+        return CATEGORY_CONSTANTS.getOrDefault(location.getTypes().get(0), 0.0) * (2 - Double.parseDouble(location.getDistance()));
     }
 
 
@@ -172,7 +190,6 @@ public class GoogleMapsAPIManager {
      */
     private Map<String, String> calculateCategoryScore(List<Location> places, String category)
     {
-
         double score = 0.0;
 
         int closePlaces = 0;
@@ -183,9 +200,9 @@ public class GoogleMapsAPIManager {
 
         for (Location place : places)
         {
-            if (place.getCategory().equals(category))
+            if (place.getTypes().contains(category))
             {
-                double distance = Double.parseDouble(place.getWalkingDistance());
+                double distance = Double.parseDouble(place.getDistance());
 
                 score += calculateLocationScore(place);
 
@@ -204,8 +221,17 @@ public class GoogleMapsAPIManager {
                
             }
         }
+        //return Map.of("category", category, "score", String.valueOf(score), "closePlaces", String.valueOf(closePlaces), "mediumPlaces", String.valueOf(mediumPlaces), "farPlaces", String.valueOf(farPlaces));
+        Map<String, String> categoryScore = new HashMap<String, String>();
+        categoryScore.put("category", category);
+        categoryScore.put("score", String.valueOf(score));
+        categoryScore.put("closePlaces", String.valueOf(closePlaces));
+        categoryScore.put("mediumPlaces", String.valueOf(mediumPlaces));
+        categoryScore.put("farPlaces", String.valueOf(farPlaces));
 
-        return Map.of("category", category, "score", String.valueOf(score), "closePlaces", String.valueOf(closePlaces), "mediumPlaces", String.valueOf(mediumPlaces), "farPlaces", String.valueOf(farPlaces));
+        System.out.println("Category Score: " + categoryScore);
+
+        return categoryScore;
         
     }
 
@@ -239,7 +265,7 @@ public class GoogleMapsAPIManager {
      */
     public Map<String, String> calculateCategoryScores(List<Location> places) {
        
-        Map<String, String> scores = Map.of();
+        Map<String, String> scores = new HashMap<String,String>();
 
         for (String category : CATEGORY_CONSTANTS.keySet()) // Use CATEGORY_CONSTANTS key set
         {

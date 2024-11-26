@@ -1,0 +1,134 @@
+{
+  "destination_addresses": [
+    "123 Main Street, Example City, EX 12345",
+    "456 Oak Avenue, Example City, EX 12345",
+    "789 Maple Road, Example City, EX 12345",
+    "321 Birch Lane, Example City, EX 12345",
+    "987 Elm Street, Example City, EX 12345",
+    "159 Pine Avenue, Example City, EX 12345",
+    "112 Willow Boulevard, Example City, EX 12345",
+    "654 Cedar Court, Example City, EX 12345",
+    "111 Aspen Plaza, Example City, EX 12345",
+    "202 Redwood Drive, Example City, EX 12345"
+  ],
+  "origin_addresses": [
+    "1 Example Origin Street, Example City, EX 12345"
+  ],
+  "rows": [
+    {
+      "elements": [
+        {
+          "status": "OK",
+          "distance": {
+            "text": "1.2 miles",
+            "value": 1931
+          },
+          "duration": {
+            "text": "24 mins",
+            "value": 1440
+          }
+        },
+        {
+          "status": "OK",
+          "distance": {
+            "text": "0.8 miles",
+            "value": 1287
+          },
+          "duration": {
+            "text": "16 mins",
+            "value": 960
+          }
+        },
+        {
+          "status": "OK",
+          "distance": {
+            "text": "1.5 miles",
+            "value": 2414
+          },
+          "duration": {
+            "text": "30 mins",
+            "value": 1800
+          }
+        },
+        {
+          "status": "OK",
+          "distance": {
+            "text": "1.0 miles",
+            "value": 1609
+          },
+          "duration": {
+            "text": "20 mins",
+            "value": 1200
+          }
+        },
+        {
+          "status": "OK",
+          "distance": {
+            "text": "0.9 miles",
+            "value": 1448
+          },
+          "duration": {
+            "text": "18 mins",
+            "value": 1080
+          }
+        },
+        {
+          "status": "OK",
+          "distance": {
+            "text": "1.7 miles",
+            "value": 2736
+          },
+          "duration": {
+            "text": "34 mins",
+            "value": 2040
+          }
+        },
+        {
+          "status": "OK",
+          "distance": {
+            "text": "1.3 miles",
+            "value": 2092
+          },
+          "duration": {
+            "text": "26 mins",
+            "value": 1560
+          }
+        },
+        {
+          "status": "OK",
+          "distance": {
+            "text": "0.6 miles",
+            "value": 965
+          },
+          "duration": {
+            "text": "12 mins",
+            "value": 720
+          }
+        },
+        {
+          "status": "OK",
+          "distance": {
+            "text": "1.4 miles",
+            "value": 2253
+          },
+          "duration": {
+            "text": "28 mins",
+            "value": 1680
+          }
+        },
+        {
+          "status": "OK",
+          "distance": {
+            "text": "2.0 miles",
+            "value": 3218
+          },
+          "duration": {
+            "text": "40 mins",
+            "value": 2400
+          }
+        }
+      ]
+    }
+  ],
+  "status": "OK"
+}

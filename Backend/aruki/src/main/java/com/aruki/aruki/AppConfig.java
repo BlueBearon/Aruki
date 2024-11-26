@@ -7,8 +7,13 @@ import org.springframework.context.annotation.Bean;
 public class AppConfig {
 
     @Bean
-    public GoogleMapsAPIManager googleMapsAPIManager() {
-        return new GoogleMapsAPIManager();
+    public LocationManager googleMapsAPIManager() {
+        return new LocationManager();
+    }
+
+    @Bean
+    public APIManager apiManager() {
+        return new APIManager();
     }
     
 }

@@ -1,54 +1,47 @@
 package com.aruki.aruki;
 
 import org.junit.jupiter.api.Test;
+import java.util.Arrays;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class LocationTest {
 
     @Test
-    public void testLocationConstructorWithWalkingDistance() {
-        Location location = new Location("Place", "ID123", "123 Street", "10km", "5km", "Category");
+    public void testLocationConstructorWithDistance() {
+        Location location = new Location("Place", "123 Street", Arrays.asList("Category1", "Category2"), "10km");
         assertEquals("Place", location.getName());
-        assertEquals("ID123", location.getGoogleMapsUniqueID());
         assertEquals("123 Street", location.getAddress());
+        assertEquals(Arrays.asList("Category1", "Category2"), location.getTypes());
         assertEquals("10km", location.getDistance());
-        assertEquals("5km", location.getWalkingDistance());
-        assertEquals("Category", location.getCategory());
     }
 
     @Test
-    public void testLocationConstructorWithoutWalkingDistance() {
-        Location location = new Location("Place", "ID123", "123 Street", "10km", "Category");
+    public void testLocationConstructorWithoutDistance() {
+        Location location = new Location("Place", "123 Street", Arrays.asList("Category1", "Category2"));
         assertEquals("Place", location.getName());
-        assertEquals("ID123", location.getGoogleMapsUniqueID());
         assertEquals("123 Street", location.getAddress());
-        assertEquals("10km", location.getDistance());
-        assertNull(location.getWalkingDistance());
-        assertEquals("Category", location.getCategory());
+        assertEquals(Arrays.asList("Category1", "Category2"), location.getTypes());
+        assertNull(location.getDistance());
     }
 
     @Test
     public void testSettersAndGetters() {
-        Location location = new Location("Place", "ID123", "123 Street", "10km", "5km", "Category");
+        Location location = new Location("Place", "123 Street", Arrays.asList("Category1", "Category2"), "10km");
         location.setName("New Place");
-        location.setGoogleMapsUniqueID("ID456");
         location.setAddress("456 Avenue");
+        location.setTypes(Arrays.asList("New Category1", "New Category2"));
         location.setDistance("20km");
-        location.setWalkingDistance("10km");
-        location.setCategory("New Category");
 
         assertEquals("New Place", location.getName());
-        assertEquals("ID456", location.getGoogleMapsUniqueID());
         assertEquals("456 Avenue", location.getAddress());
+        assertEquals(Arrays.asList("New Category1", "New Category2"), location.getTypes());
         assertEquals("20km", location.getDistance());
-        assertEquals("10km", location.getWalkingDistance());
-        assertEquals("New Category", location.getCategory());
     }
 
     @Test
     public void testToString() {
-        Location location = new Location("Place", "ID123", "123 Street", "10km", "5km", "Category");
-        String expected = "{\"name\":\"Place\",\"googleMapsUniqueID\":\"ID123\",\"address\":\"123 Street\",\"distance\":\"10km\",\"walkingDistance\":\"5km\",\"category\":\"Category\"}";
+        Location location = new Location("Place", "123 Street", Arrays.asList("Category1", "Category2"), "10km");
+        String expected = "{\"name\":\"Place\",\"address\":\"123 Street\",\"types\":[Category1, Category2],\"distance\":\"10km\"}";
         assertEquals(expected, location.toString());
     }
 }

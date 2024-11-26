@@ -1,0 +1,135 @@
+{
+  "results": [
+    {
+      "name": "Sunrise Elementary School",
+      "address": "123 Main Street, Example City, EX 12345",
+      "types": ["school", "point_of_interest", "establishment"],
+      "geometry": {
+        "location": {
+          "lat": 40.712776,
+          "lng": -74.005974
+        }
+      },
+      "rating": 4.2,
+      "user_ratings_total": 25
+    },
+    {
+      "name": "The Green Leaf Diner",
+      "address": "456 Oak Avenue, Example City, EX 12345",
+      "types": ["restaurant", "food", "point_of_interest", "establishment"],
+      "geometry": {
+        "location": {
+          "lat": 40.713921,
+          "lng": -74.003156
+        }
+      },
+      "rating": 4.5,
+      "user_ratings_total": 130
+    },
+    {
+      "name": "Central Fitness Gym",
+      "address": "789 Maple Road, Example City, EX 12345",
+      "types": ["gym", "health", "point_of_interest", "establishment"],
+      "geometry": {
+        "location": {
+          "lat": 40.710392,
+          "lng": -74.009821
+        }
+      },
+      "rating": 4.8,
+      "user_ratings_total": 90
+    },
+    {
+      "name": "Example Library",
+      "address": "321 Birch Lane, Example City, EX 12345",
+      "types": ["library", "point_of_interest", "establishment"],
+      "geometry": {
+        "location": {
+          "lat": 40.715678,
+          "lng": -74.004789
+        }
+      },
+      "rating": 4.6,
+      "user_ratings_total": 47
+    },
+    {
+      "name": "Sunny Day Coffee Shop",
+      "address": "987 Elm Street, Example City, EX 12345",
+      "types": ["cafe", "food", "point_of_interest", "establishment"],
+      "geometry": {
+        "location": {
+          "lat": 40.711874,
+          "lng": -74.006732
+        }
+      },
+      "rating": 4.4,
+      "user_ratings_total": 62
+    },
+    {
+      "name": "Pine Community Park",
+      "address": "159 Pine Avenue, Example City, EX 12345",
+      "types": ["park", "point_of_interest", "establishment"],
+      "geometry": {
+        "location": {
+          "lat": 40.716001,
+          "lng": -74.008213
+        }
+      },
+      "rating": 4.7,
+      "user_ratings_total": 105
+    },
+    {
+      "name": "HealthFirst Clinic",
+      "address": "951 Cedar Street, Example City, EX 12345",
+      "types": ["hospital", "health", "point_of_interest", "establishment"],
+      "geometry": {
+        "location": {
+          "lat": 40.709999,
+          "lng": -74.007645
+        }
+      },
+      "rating": 4.1,
+      "user_ratings_total": 55
+    },
+    {
+      "name": "Elite Tech Solutions",
+      "address": "753 Technology Drive, Example City, EX 12345",
+      "types": ["electronics_store", "point_of_interest", "establishment"],
+      "geometry": {
+        "location": {
+          "lat": 40.712400,
+          "lng": -74.001203
+        }
+      },
+      "rating": 4.3,
+      "user_ratings_total": 77
+    },
+    {
+      "name": "Heritage Art Museum",
+      "address": "852 Museum Row, Example City, EX 12345",
+      "types": ["museum", "point_of_interest", "establishment"],
+      "geometry": {
+        "location": {
+          "lat": 40.717240,
+          "lng": -74.002345
+        }
+      },
+      "rating": 4.9,
+      "user_ratings_total": 215
+    },
+    {
+      "name": "Metro Cinema Complex",
+      "address": "147 Cinema Blvd, Example City, EX 12345",
+      "types": ["movie_theater", "point_of_interest", "establishment"],
+      "geometry": {
+        "location": {
+          "lat": 40.711200,
+          "lng": -74.003789
+        }
+      },
+      "rating": 4.6,
+      "user_ratings_total": 340
+    }
+  ],
+  "status": "OK"
+}

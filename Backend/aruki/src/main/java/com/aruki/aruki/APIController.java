@@ -34,7 +34,7 @@ public class APIController {
 
 
     @Autowired
-    private GoogleMapsAPIManager googleMapsAPIManager;
+    private LocationManager googleMapsAPIManager;
 
     /**
      * This method is used to check if the API is live.
