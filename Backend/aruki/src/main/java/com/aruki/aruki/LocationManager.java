@@ -16,7 +16,7 @@ public class LocationManager {
 
 
     // Constants/weights for each category of place
-    private static final Map<String, Double> CATEGORY_CONSTANTS = Map.of(
+    public static final Map<String, Double> CATEGORY_CONSTANTS = Map.of(
         "grocery_or_supermarket", 1.5, // Essential for daily living
         "restaurant", 1.2,            // Regular need but less critical than groceries
         "park", 1.1,                  // Encourages recreation and health
@@ -176,7 +176,7 @@ public class LocationManager {
      */
     private double calculateLocationScore(Location location)
     {
-        return CATEGORY_CONSTANTS.getOrDefault(location.getTypes().get(0), 0.0) * (2 - Double.parseDouble(location.getDistance()));
+        return CATEGORY_CONSTANTS.getOrDefault(location.getTypes()[0], 0.0) * (2 - Double.parseDouble(location.getDistance()));
     }
 
 
@@ -200,7 +200,7 @@ public class LocationManager {
 
         for (Location place : places)
         {
-            if (place.getTypes().contains(category))
+            if (place.getTypes()[0].equals(category))
             {
                 double distance = Double.parseDouble(place.getDistance());
 

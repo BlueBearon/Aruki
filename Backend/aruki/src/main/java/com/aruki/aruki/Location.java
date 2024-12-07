@@ -11,7 +11,7 @@ public class Location {
 
     private String name;
     private String address;
-    private List<String> types;
+    private String[] types;
     private String distance;
 
     /**
@@ -22,7 +22,7 @@ public class Location {
      * @param types the types of the location
      * @param distance the distance to the location
      */
-    public Location(String name, String address, List<String> types, String distance) {
+    public Location(String name, String address, String[] types, String distance) {
         this.name = name;
         this.address = address;
         this.types = types;
@@ -36,23 +36,11 @@ public class Location {
      * @param address the address of the location
      * @param types the types of the location
      */
-    public Location(String name, String address, List<String> types) {
+    public Location(String name, String address, String[] types) {
         this.name = name;
         this.address = address;
         this.types = types;
         this.distance = null;
-    }
-
-    /**
-     * Constructs a Location from an API response.
-     *
-     * @param apiResponse the API response map
-     */
-    public Location(Map<String, Object> apiResponse) {
-        this.name = (String) apiResponse.getOrDefault("name", "Unknown");
-        this.address = (String) apiResponse.getOrDefault("address", "Unknown");
-        this.types = (List<String>) apiResponse.getOrDefault("types", new ArrayList<>());
-        this.distance = null; // Distance is not provided in the API response
     }
 
     /**
@@ -78,7 +66,7 @@ public class Location {
      *
      * @return the types of the location
      */
-    public List<String> getTypes() {
+    public String[] getTypes() {
         return types;
     }
 
@@ -114,7 +102,7 @@ public class Location {
      *
      * @param types the new types of the location
      */
-    public void setTypes(List<String> types) {
+    public void setTypes(String[] types) {
         this.types = types;
     }
 

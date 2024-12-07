@@ -50,9 +50,11 @@ public class LocationManagerTest {
     @Test
     public void testGetScore() {
         String location = "Sample Location";
+        String[] types = {"restaurant"};
+
         List<Location> samplePlaces = Arrays.asList(
-            new Location("Place 1", "Address 1", Arrays.asList("restaurant"), "0.4"),
-            new Location("Place 2", "Address 2", Arrays.asList("restaurant"), "0.6")
+            new Location("Place 1", "Address 1", types,  "0.4"),
+            new Location("Place 2", "Address 2", types, "0.6")
         );
 
         when(apiManager.retrievePlacesOfCategory(anyString(), eq("restaurant"), eq(true))).thenReturn(samplePlaces);
