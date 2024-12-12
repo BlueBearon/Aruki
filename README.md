@@ -1,4 +1,4 @@
-# Walkable Cities Project
+# Aruki Project
 
 ## Development Progress
 - This project is currently in development.
@@ -23,7 +23,7 @@
 - [Contact](#contact)
 
 ## Overview
-The **Walkable Cities Project** promotes walkable urban environments by analyzing the walkability of user-input locations. The application provides two primary modes of functionality: **Walk** and **Score**.
+The **Aruki Project** promotes walkable urban environments by analyzing the walkability of user-input locations. The application provides two primary modes of functionality: **Walk** and **Score**.
 
 ### Features
 - **Walk Mode**: 
