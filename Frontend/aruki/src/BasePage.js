@@ -21,7 +21,7 @@ function BasePage() {
     return (
         <DarkModeContext.Provider value={{ darkMode, toggleDarkMode }}>
             <ActiveModeContext.Provider value={{ activeMode, toggleActiveMode }}>
-                <div>
+                <div className= "flex flex-col align-items-center h-screen">
                     <TopBar />
                     <Content />           
                 </div>

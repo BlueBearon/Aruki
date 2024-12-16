@@ -16,3 +16,22 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.toggle-checkbox {
+  transition: right 0.4s ease-in-out, 
+}
+
+.toggle-checkbox:checked {
+  right: 0;
+}
+
+.toggle-checkbox:checked + .toggle-label {
+  background-color: #035cf5; /* Adjust color as needed */
+}
+
+.toggle-label {
+  width: 2.5rem;
+  height: 1.5rem;
+  background-color: #006eff; /* Adjust color as needed */
+  transition: background-color 0.2s ease-in-out;
+}
