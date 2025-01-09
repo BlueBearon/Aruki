@@ -12,24 +12,27 @@ import java.util.concurrent.Future;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+
+import com.google.maps.model.PlaceType;
+
 public class LocationManager {
 
 
     // Constants/weights for each category of place
-    public static final Map<String, Double> CATEGORY_CONSTANTS = Map.of(
-        "grocery_or_supermarket", 1.5, // Essential for daily living
-        "restaurant", 1.2,            // Regular need but less critical than groceries
-        "park", 1.1,                  // Encourages recreation and health
-        "school", 1.3,                // Critical for families and community
-        "pharmacy", 1.4,              // High priority for health and daily needs
-        "gym", 1.0,                   // Important but not essential
-        "library", 0.9,               // Valuable but situational
-        "shopping_mall", 0.8,         // Adds convenience but non-essential
-        "movie_theater", 0.7,         // Entertainment, lower priority
-        "museum", 0.6                 // Cultural, but less frequent need
+    public static final Map<PlaceType, Double> CATEGORY_CONSTANTS = Map.of(
+        PlaceType.GROCERY_OR_SUPERMARKET, 1.5, // Essential for daily living
+        PlaceType.RESTAURANT, 1.2,            // Regular need but less critical than groceries
+        PlaceType.PARK, 1.1,                  // Encourages recreation and health
+        PlaceType.SCHOOL, 1.3,                // Critical for families and community
+        PlaceType.PHARMACY, 1.4,              // High priority for health and daily needs
+        PlaceType.GYM, 1.0,                   // Important but not essential
+        PlaceType.LIBRARY, 0.9,               // Valuable but situational
+        PlaceType.SHOPPING_MALL, 0.8,         // Adds convenience but non-essential
+        PlaceType.MOVIE_THEATER, 0.7,         // Entertainment, lower priority
+        PlaceType.MUSEUM, 0.6                 // Cultural, but less frequent need
     );
 
-
+    
     private static final double CLOSE_DISTANCE = 0.5;
 
     private static final double MEDIUM_DISTANCE = 1.0;
@@ -64,7 +67,7 @@ public class LocationManager {
         ExecutorService executor = Executors.newFixedThreadPool(CATEGORY_CONSTANTS.size());
         List<Future<List<Location>>> futures = new ArrayList<>();
 
-        for (String category : CATEGORY_CONSTANTS.keySet()) {
+        for (PlaceType category : CATEGORY_CONSTANTS.keySet()) {
             Callable<List<Location>> task = () -> apiManager.retrievePlacesOfCategory(location, category, true);
             futures.add(executor.submit(task));
         }
@@ -143,24 +146,15 @@ public class LocationManager {
 
         List<Location> places = retrievePlaces(location);
 
-        System.out.println("Checkpoint 1");
-
         // Find overall walking score
         double walkability = calculateOverallScore(places);
-
-        System.out.println("Checkpoint 2");
 
         // Find walking score for each category
         Map<String, String> scores = calculateCategoryScores(places);
 
-        System.out.println("Checkpoint 3");
-
         Map<String, String> result = new HashMap<>();
         result.put("walkability", String.valueOf(walkability));
         result.put("scores", scores.toString());
-
-
-        System.out.println("Checkpoint 4");
 
         return result;
 
@@ -176,7 +170,9 @@ public class LocationManager {
      */
     private double calculateLocationScore(Location location)
     {
-        return CATEGORY_CONSTANTS.getOrDefault(location.getTypes()[0], 0.0) * (2 - Double.parseDouble(location.getDistance()));
+        PlaceType category = getCategory(location.getTypes()[0]);
+
+        return CATEGORY_CONSTANTS.getOrDefault(category, 0.0) * (2 - Double.parseDouble(location.getDistance()));
     }
 
 
@@ -188,7 +184,7 @@ public class LocationManager {
      * @param places - The list of places in the location
      * @return double - The walkability score of the location respective to the category of place
      */
-    private Map<String, String> calculateCategoryScore(List<Location> places, String category)
+    private Map<String, String> calculateCategoryScore(List<Location> places, PlaceType category)
     {
         double score = 0.0;
 
@@ -200,7 +196,7 @@ public class LocationManager {
 
         for (Location place : places)
         {
-            if (place.getTypes()[0].equals(category))
+            if (place.getTypes()[0].equals(category.toString()))
             {
                 double distance = Double.parseDouble(place.getDistance());
 
@@ -223,7 +219,7 @@ public class LocationManager {
         }
         //return Map.of("category", category, "score", String.valueOf(score), "closePlaces", String.valueOf(closePlaces), "mediumPlaces", String.valueOf(mediumPlaces), "farPlaces", String.valueOf(farPlaces));
         Map<String, String> categoryScore = new HashMap<String, String>();
-        categoryScore.put("category", category);
+        categoryScore.put("category", category.toString());
         categoryScore.put("score", String.valueOf(score));
         categoryScore.put("closePlaces", String.valueOf(closePlaces));
         categoryScore.put("mediumPlaces", String.valueOf(mediumPlaces));
@@ -265,15 +261,31 @@ public class LocationManager {
      */
     public Map<String, String> calculateCategoryScores(List<Location> places) {
        
-        Map<String, String> scores = new HashMap<String,String>();
+        Map<String, String> scores = new HashMap<String, String>();
 
-        for (String category : CATEGORY_CONSTANTS.keySet()) // Use CATEGORY_CONSTANTS key set
+        for (PlaceType category : CATEGORY_CONSTANTS.keySet()) // Use CATEGORY_CONSTANTS key set
         {
             Map<String, String> categoryScore = calculateCategoryScore(places, category);
-            scores.put(category, categoryScore.toString());
+            scores.put(category.toString(), categoryScore.toString());
         }
 
         return scores;
+    }
+
+
+    /**
+     * This method retrieves the category of a place.
+     * 
+     * @param type - The type of the place
+     * @return PlaceType - The category of the place
+     */
+    private PlaceType getCategory(String type) {
+        for (PlaceType category : CATEGORY_CONSTANTS.keySet()) {
+            if (category.toString().equals(type)) {
+                return category;
+            }
+        }
+        return null;
     }
   
     

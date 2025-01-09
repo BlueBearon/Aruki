@@ -14,7 +14,7 @@ public class LocationTest {
         Location location = new Location("Place", "123 Street", types, "10km");
         assertEquals("Place", location.getName());
         assertEquals("123 Street", location.getAddress());
-        assertEquals(Arrays.asList("Category1", "Category2"), location.getTypes());
+        assertEquals(types, location.getTypes());
         assertEquals("10km", location.getDistance());
     }
 
@@ -23,7 +23,7 @@ public class LocationTest {
         Location location = new Location("Place", "123 Street", types);
         assertEquals("Place", location.getName());
         assertEquals("123 Street", location.getAddress());
-        assertEquals(Arrays.asList("Category1", "Category2"), location.getTypes());
+        assertEquals(types, location.getTypes());
         assertNull(location.getDistance());
     }
 
@@ -37,7 +37,7 @@ public class LocationTest {
 
         assertEquals("New Place", location.getName());
         assertEquals("456 Avenue", location.getAddress());
-        assertEquals(Arrays.asList("New Category1", "New Category2"), location.getTypes());
+        assertEquals(types2, location.getTypes());
         assertEquals("20km", location.getDistance());
     }
 

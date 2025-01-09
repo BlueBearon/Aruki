@@ -12,6 +12,9 @@ import com.google.maps.model.PlacesSearchResponse;
 import com.google.maps.model.PlacesSearchResult;
 import com.google.maps.model.TravelMode;
 
+import io.github.cdimascio.dotenv.Dotenv;
+
+import java.io.FileNotFoundException;
 // Java Libraries
 import java.util.ArrayList;
 import java.util.List;
@@ -23,12 +26,46 @@ import java.util.random.RandomGenerator;
 public class APIManager {
 
 
-    private final String apiKey = "YOUR_API_KEY";
-    private final GeoApiContext context;
+    private String apiKey;
+    private GeoApiContext context;
 
 
     public APIManager(){
-        this.context = new GeoApiContext.Builder().apiKey(apiKey).build();
+
+        this.apiKey = "";
+        this.context = null;
+
+        try{
+            // Load the .env file
+            Dotenv dotenv = Dotenv.load();
+
+            //Check to make sure Dotenv found the .env file
+            if (dotenv == null) {
+                throw new FileNotFoundException("Error: .env file not found. Please create a .env file in the root directory of the project and add the API_KEY variable to it.");
+            }
+            else
+            {
+                System.out.println("Found .env file");
+            }
+
+            this.apiKey = dotenv.get("API_KEY");
+
+            //Check to make sure the API Key was found in the .env file
+            if (this.apiKey == null) {
+                throw new RuntimeException("Error: API_KEY not found in .env file. Please add the API_KEY variable to the .env file with your Google Maps API key.");
+            }
+            else
+            {
+                System.out.println("Found API_KEY in .env file");
+            }
+
+            this.context = new GeoApiContext.Builder().apiKey(apiKey).build();
+
+        } catch (Exception e) 
+        {
+            e.printStackTrace();
+            System.exit(1);
+        }
     }
 
 
@@ -40,7 +77,7 @@ public class APIManager {
      * @param test whether to use sample data for testing
      * @return a list of places matching the category near the location
      */
-    public List<Location> retrievePlacesOfCategory(String location, String category, boolean test) {
+    public List<Location> retrievePlacesOfCategory(String location, PlaceType category, boolean test) {
         
         if (test) 
         {
@@ -50,7 +87,7 @@ public class APIManager {
         {
             try{
                 // category is a string for the PlaceType
-                PlacesSearchResponse response = PlacesApi.textSearchQuery(context, location).type(PlaceType.valueOf(category)).await();
+                PlacesSearchResponse response = PlacesApi.textSearchQuery(context, location).type(category).await();
                 List<Location> places = new ArrayList<>();
                 for (PlacesSearchResult result : response.results) {
                     places.add(new Location(result.name, result.formattedAddress, result.types));
@@ -108,7 +145,7 @@ public class APIManager {
      * @param category the category of places to search for
      * @return a list of sample places matching the category near the location
      */
-    public static List<Location> sampleData_retrievePlacesOfCategory(String location, String category) {
+    public static List<Location> sampleData_retrievePlacesOfCategory(String location, PlaceType category) {
         
         // This method should mimic output from the Google Places API
         List<Location> places = new ArrayList<>();
@@ -117,61 +154,61 @@ public class APIManager {
         // Placeholder Data
         switch(category)
         {
-            case "restaurant":
+            case PlaceType.RESTAURANT:
                 categories[0] = "restaurant";
                 places.add(new Location("The Green Leaf Diner", "456 Oak Avenue, Example City, 12345", categories));
                 places.add(new Location("The Red Tomato", "789 Maple Street, Example City, 12345", categories));
                 places.add(new Location("The Blue Ocean", "123 Pine Road, Example City, 12345", categories));
                 break;
-            case "grocery_or_supermarket":
+            case PlaceType.GROCERY_OR_SUPERMARKET:
                 categories[0] = "grocery_or_supermarket";
                 places.add(new Location("The Fresh Market", "456 Oak Avenue, Example City, 12345", categories));
                 places.add(new Location("The Local Market", "789 Maple Street, Example City, 12345", categories));
                 places.add(new Location("The Organic Market", "123 Pine Road, Example City, 12345", categories));
                 break;
-            case "park":
+            case PlaceType.PARK:
                 categories[0] = "park";
                 places.add(new Location("The Green Park", "456 Oak Avenue, Example City, 12345", categories));
                 places.add(new Location("The Red Park", "789 Maple Street, Example City, 12345", categories));
                 places.add(new Location("The Blue Park", "123 Pine Road, Example City, 12345", categories));
                 break;
-            case "school":
+            case PlaceType.SCHOOL:
                 categories[0] = "school";
                 places.add(new Location("The Elementary School", "456 Oak Avenue, Example City, 12345", categories));
                 places.add(new Location("The Middle School", "789 Maple Street, Example City, 12345", categories));
                 places.add(new Location("The High School", "123 Pine Road, Example City, 12345", categories));
                 break;
-            case "pharmacy":
+            case PlaceType.HOSPITAL:
                 categories[0] = "pharmacy";
                 places.add(new Location("The Local Pharmacy", "456 Oak Avenue, Example City, 12345", categories));
                 places.add(new Location("The National Pharmacy", "789 Maple Street, Example City, 12345", categories));
                 places.add(new Location("The International Pharmacy", "123 Pine Road, Example City, 12345", categories));
                 break;
-            case "gym":
+            case PlaceType.GYM:
                 categories[0] = "gym";
                 places.add(new Location("The Local Gym", "456 Oak Avenue, Example City, 12345", categories));
                 places.add(new Location("The National Gym", "789 Maple Street, Example City, 12345", categories));
                 places.add(new Location("The International Gym", "123 Pine Road, Example City, 12345", categories));
                 break;
-            case "library":
+            case PlaceType.LIBRARY:
                 categories[0] = "library";
                 places.add(new Location("The Local Library", "456 Oak Avenue, Example City, 12345", categories));
                 places.add(new Location("The National Library", "789 Maple Street, Example City, 12345", categories));
                 places.add(new Location("The International Library", "123 Pine Road, Example City, 12345", categories));
                 break;
-            case "shopping_mall":
+            case PlaceType.SHOPPING_MALL:
                 categories[0] = "shopping_mall";
                 places.add(new Location("The Local Mall", "456 Oak Avenue, Example City, 12345", categories));
                 places.add(new Location("The National Mall", "789 Maple Street, Example City, 12345", categories));
                 places.add(new Location("The International Mall", "123 Pine Road, Example City, 12345", categories));
                 break;
-            case "movie_theater":
+            case PlaceType.MOVIE_THEATER:
                 categories[0] = "movie_theater";
                 places.add(new Location("The Local Theater", "456 Oak Avenue, Example City, 12345", categories));
                 places.add(new Location("The National Theater", "789 Maple Street, Example City, 12345", categories));
                 places.add(new Location("The International Theater", "123 Pine Road, Example City, 12345", categories));
                 break;
-            case "museum":
+            case PlaceType.MUSEUM:
                 categories[0] = "museum";
                 places.add(new Location("The Local Museum", "456 Oak Avenue, Example City, 12345", categories));
                 places.add(new Location("The National Museum", "789 Maple Street, Example City, 12345", categories));
@@ -217,13 +254,38 @@ public class APIManager {
     {
         APIManager apiManager = new APIManager();
 
-        final String testAddress = "1029 Sandoval Drive, Virginia Beach, VA 23454";
+        Dotenv dotenv = Dotenv.load();
+
+        final String testAddress = dotenv.get("TEST_ADDRESS");
 
         final double searchRadius = 2.0; //miles
 
-        final String[] categories = LocationManager.CATEGORY_CONSTANTS.keySet().toArray(new String[0]);
+        final PlaceType[] categories = LocationManager.CATEGORY_CONSTANTS.keySet().toArray(new PlaceType[0]);
 
-        
+        /* 
+        List<Location> places = apiManager.retrievePlacesOfCategory(testAddress, categories[0], false);
+
+        for (Location place : places) {
+            System.out.println(place.getName() + " - " + place.getAddress());
+        }
+
+        System.out.println();
+
+        List<String> placeAddresses = generateAddressList(places);
+
+        for (String placeAddress : placeAddresses) {
+            System.out.println(placeAddress);
+        }
+
+        System.out.println();
+
+        List<String> walkingDistances = apiManager.getWalkingDistances(testAddress, placeAddresses, false);
+
+        for (String distance : walkingDistances) {
+            System.out.println(distance);
+        }
+
+        */
 
 
     }

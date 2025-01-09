@@ -1,8 +1,6 @@
 package com.aruki.aruki;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.Arrays;
 
 /**
  * Represents a location as returned by the Google Maps API.
@@ -122,7 +120,10 @@ public class Location {
      */
     @Override
     public String toString() {
-        return "{\"name\":\"" + name + "\",\"address\":\"" + address + "\",\"types\":" + types + ",\"distance\":" + (distance != null ? "\"" + distance + "\"" : null) + "}";
+
+        String typesString = Arrays.toString(types);
+
+        return "{\"name\":\"" + name + "\",\"address\":\"" + address + "\",\"types\":" + typesString + ",\"distance\":" + (distance != null ? "\"" + distance + "\"" : null) + "}";
     }
     
 }
