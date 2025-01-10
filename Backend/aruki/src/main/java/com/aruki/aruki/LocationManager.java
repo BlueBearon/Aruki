@@ -15,7 +15,78 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.google.maps.model.PlaceType;
 
+import io.github.cdimascio.dotenv.Dotenv;
+
+
+
+
+
 public class LocationManager {
+
+
+    private class CategoryScore
+    {
+        public String category;
+        public double score;
+        public int closePlaces;
+        public int mediumPlaces;
+        public int farPlaces;
+
+        public CategoryScore(String category, double score, int closePlaces, int mediumPlaces, int farPlaces)
+        {
+            this.category = category;
+            this.score = score;
+            this.closePlaces = closePlaces;
+            this.mediumPlaces = mediumPlaces;
+            this.farPlaces = farPlaces;
+        }
+
+        public double getScore()
+        {
+            return this.score;
+        }
+
+        public int getClosePlaces()
+        {
+            return this.closePlaces;
+        }
+
+        public int getMediumPlaces()
+        {
+            return this.mediumPlaces;
+        }
+
+        public int getFarPlaces()
+        {
+            return this.farPlaces;
+        }
+
+
+        public void setScore(double score)
+        {
+            this.score = score;
+        }
+
+        public void setClosePlaces(int closePlaces)
+        {
+            this.closePlaces = closePlaces;
+        }
+
+        public void setMediumPlaces(int mediumPlaces)
+        {
+            this.mediumPlaces = mediumPlaces;
+        }
+
+        public void setFarPlaces(int farPlaces)
+        {
+            this.farPlaces = farPlaces;
+        }
+
+        public String toString()
+        {
+            return "{\"category\":\"" + category + "\",\"score\":\"" + score + "\",\"closePlaces\":\"" + closePlaces + "\",\"mediumPlaces\":\"" + mediumPlaces + "\",\"farPlaces\":\"" + farPlaces + "\"}";
+        }
+    }
 
 
     // Constants/weights for each category of place
@@ -33,21 +104,35 @@ public class LocationManager {
     );
 
     
-    private static final double CLOSE_DISTANCE = 0.5;
 
-    private static final double MEDIUM_DISTANCE = 1.0;
+    private static final double SEARCH_RADIUS = 2.0; // kilometers
 
-    private static final double FAR_DISTANCE = 1.5;
+    private static final double CLOSE_DISTANCE = 0.5; // kilometers
 
-    private static final double SEARCH_RADIUS = 2.0;
+    private static final double MEDIUM_DISTANCE = 1.0; // kilometers
+
+    private static final double FAR_DISTANCE = 2.0; // kilometers
+
+    private static final int BATCH_SIZE = 25; // Define a batch size for API requests
 
     @Autowired
     private APIManager apiManager; //Isolates the Google Maps API calls, so that the LocationManager class is not directly dependent on the Google Maps API. 
 
     public LocationManager() {}
 
-    public Map<String, String> getPlaces(String location) {
-        List<Location> places = retrievePlaces(location);
+
+    public LocationManager(APIManager apiManager) {
+        this.apiManager = apiManager;
+    }
+
+    /**
+     * This method retrieves places near the location.
+     * @param location - The location to retrieve places near
+     * @param test - Whether to use test data
+     * @return Map<String, String> - The list of places near the location
+     */
+    public Map<String, String> getPlaces(String location, boolean test) {
+        List<Location> places = retrievePlaces(location, test);
         return Map.of("places", places.toString());
     }
     
@@ -59,16 +144,17 @@ public class LocationManager {
      * The method then verifies the walking distances of the places.
      * 
      * @param location - The location to retrieve places near
+     * @param test - Whether to use test data
      * @return List<Location> - The list of places near the location
      */
-    private List<Location> retrievePlaces(String location) {
+    private List<Location> retrievePlaces(String location, boolean test) {
         
         List<Location> places = new ArrayList<Location>();
         ExecutorService executor = Executors.newFixedThreadPool(CATEGORY_CONSTANTS.size());
         List<Future<List<Location>>> futures = new ArrayList<>();
 
         for (PlaceType category : CATEGORY_CONSTANTS.keySet()) {
-            Callable<List<Location>> task = () -> apiManager.retrievePlacesOfCategory(location, category, true);
+            Callable<List<Location>> task = () -> apiManager.retrievePlacesOfCategory(location, category, test);
             futures.add(executor.submit(task));
         }
 
@@ -82,8 +168,20 @@ public class LocationManager {
 
         executor.shutdown();
 
+        System.out.println("Places Before Walkability Check: ");
+
+        for (Location place : places) {
+            System.out.println(place);
+        }
+
+        System.out.println("Places After Walkability Check: ");
+
         // Verify walking distances of places
-        places = verifyWalkingDistances(location, places);
+        places = verifyWalkingDistances(location, places, test);
+
+        for (Location place : places) {
+            System.out.println(place);
+        }
 
         return places;
     }
@@ -98,9 +196,13 @@ public class LocationManager {
      * @param places
      * @return
      */
-    private List<Location> verifyWalkingDistances(String originAddress, List<Location> places) {
+    private List<Location> verifyWalkingDistances(String originAddress, List<Location> places, boolean test) {
 
         List<Location> verifiedPlaces = new ArrayList<Location>();
+
+        int initialCount = places.size();
+        int removedCount = 0;
+        int finalCount = 0;
 
         try
         {
@@ -112,19 +214,30 @@ public class LocationManager {
                 placeAddresses.add(place.getAddress());
             }
 
-            List<String> walkingDistances = apiManager.getWalkingDistances(originAddress, placeAddresses, true);
+            int totalPlaces = placeAddresses.size();
+            for (int i = 0; i < totalPlaces; i += BATCH_SIZE) {
+                int end = Math.min(i + BATCH_SIZE, totalPlaces);
+                List<String> batch = placeAddresses.subList(i, end);
+                List<String> walkingDistances = apiManager.getWalkingDistances(originAddress, batch, test);
 
-            for (int i = 0; i < places.size(); i++)
-            {
-                Location place = places.get(i);
-                String walkingDistance = walkingDistances.get(i);
-
-                if (Double.parseDouble(walkingDistance) <= SEARCH_RADIUS)
-                {
-                    place.setDistance(walkingDistance);
-                    verifiedPlaces.add(place);
+                for (int j = 0; j < batch.size(); j++) {
+                    Location place = places.get(i + j);
+                    String walkingDistance = walkingDistances.get(j);
+                    if (Location.parseDistance(walkingDistance) <= SEARCH_RADIUS) {
+                        place.setDistance(walkingDistance);
+                        verifiedPlaces.add(place);
+                    }
+                    else
+                    {
+                        System.out.println("Place " + place.getName() + " removed due to distance: " + walkingDistance + "\n");
+                        removedCount++;
+                    }
                 }
             }
+
+            finalCount = verifiedPlaces.size();
+
+            System.out.println("\n\n Places Removed: " + removedCount + " out of " + initialCount + " total places. Final Count is " + finalCount + "\n\n");
 
             return verifiedPlaces; 
         }
@@ -136,142 +249,110 @@ public class LocationManager {
     }
 
     /**
+     * This method retrieves the score of the location.
      * 
-     * @param location
-     * @return
+     * The method retrieves the places near the location.
+     * 
+     * The method calculates the score of the location based on the places near the location.
+     * 
+     * @param location - The location to retrieve the score of
+     * @param test - Whether to use test data
+     * @return Map<String, String> - The score of the location
      */
-    public Map<String, String> getScore(String location) {
-
-        // Example Response: { "walkability": "7.5", "scores": [ { "category": "restaurant", "score": "8.2", "closePlaces" : "5", "mediumPlaces" : "3", "farPlaces" : "2" }, { "category": "park", "score": "9.1", "closePlaces" : "3", "mediumPlaces" : "4", "farPlaces" : "1" } ] }
-
-        List<Location> places = retrievePlaces(location);
-
-        // Find overall walking score
-        double walkability = calculateOverallScore(places);
-
-        // Find walking score for each category
-        Map<String, String> scores = calculateCategoryScores(places);
-
-        Map<String, String> result = new HashMap<>();
-        result.put("walkability", String.valueOf(walkability));
-        result.put("scores", scores.toString());
-
-        return result;
-
-    }
-
-    /**
-     * This method calculates the walkability significance score of a location to the original location.
-     * 
-     * WS (of location i) = categoryConstant * (2 - distanceToLocation)
-     * 
-     * @param location - The location to calculate the score of
-     * @return double - The walkability significance score of the location
-     */
-    private double calculateLocationScore(Location location)
+    public Map<String, String> getScore(String location, boolean test)
     {
-        PlaceType category = getCategory(location.getTypes()[0]);
+        List<Location> places = retrievePlaces(location, test);
 
-        return CATEGORY_CONSTANTS.getOrDefault(category, 0.0) * (2 - Double.parseDouble(location.getDistance()));
-    }
+        Map<String, CategoryScore> scores = new HashMap<String, CategoryScore>();
 
+        for (PlaceType category : CATEGORY_CONSTANTS.keySet())
+        {
+            scores.put(category.toString(), new CategoryScore(category.toString(), 0.0, 0, 0, 0));
+        }
 
-    /**
-     * This method calculates the walkability score of a location respective to one specific category of place.
-     * 
-     * The score is calculated by summing the walkability significance scores of each place in the location that is of the specified category.
-     * 
-     * @param places - The list of places in the location
-     * @return double - The walkability score of the location respective to the category of place
-     */
-    private Map<String, String> calculateCategoryScore(List<Location> places, PlaceType category)
-    {
-        double score = 0.0;
+        CategoryScore overall = new CategoryScore("overall", 0.0, 0, 0, 0);
 
-        int closePlaces = 0;
-
-        int mediumPlaces = 0;
-
-        int farPlaces = 0;
+        scores.put("overall", overall);
 
         for (Location place : places)
         {
-            if (place.getTypes()[0].equals(category.toString()))
-            {
-                double distance = Double.parseDouble(place.getDistance());
+            calculateLocationScore(place, scores);
+        }
 
-                score += calculateLocationScore(place);
+        Map<String, String> result = new HashMap<String, String>();
+
+        double walkability = scores.get("overall").getScore();
+
+        result.put("walkability", String.valueOf(walkability));
+
+        Map<String, String> categoryScores = new HashMap<String, String>();
+
+        for (PlaceType category : CATEGORY_CONSTANTS.keySet())
+        {
+            categoryScores.put(category.toString(), scores.get(category.toString()).toString());
+        }
+
+        result.put("scores", categoryScores.toString());
+
+        return result;
+    }
+
+    /**
+     * This method calculates the score of the location based on the places near the location.
+     * @param location - The location to calculate the score of
+     * @param scores - The scores of the location
+     */
+    private void calculateLocationScore(Location location, Map<String, CategoryScore> scores)
+    {
+        String[] categories = location.getTypes();
+
+        for(String category : categories)
+        {
+            PlaceType placeType = getCategory(category);
+
+            if(placeType != null)
+            {
+
+                double distance = Location.parseDistance(location.getDistance());
+
+                double distancePenalty = Math.exp(-distance / SEARCH_RADIUS);
+
+                //round to 2 decimal places
+                distancePenalty = Math.round(distancePenalty * 100.0) / 100.0;
+
+                
+                //update overall score
+                CategoryScore overall = scores.get("overall");
+
+                double newScore = overall.getScore() + CATEGORY_CONSTANTS.get(placeType) * distancePenalty;
+
+                //round to 2 decimal places
+                newScore = Math.round(newScore * 100.0) / 100.0;
+                overall.setScore(newScore);
+                scores.put("overall", overall);
+
+                //update category score (no need to consider CategoryConstants, but do need to update close, medium, far counts)
+                CategoryScore categoryScore = scores.get(category);
+                categoryScore.setScore(categoryScore.getScore() + distancePenalty);
 
                 if (distance <= CLOSE_DISTANCE)
                 {
-                    closePlaces++;
+                    categoryScore.setClosePlaces(categoryScore.getClosePlaces() + 1);
                 }
                 else if (distance <= MEDIUM_DISTANCE)
                 {
-                    mediumPlaces++;
+                    categoryScore.setMediumPlaces(categoryScore.getMediumPlaces() + 1);
                 }
                 else if (distance <= FAR_DISTANCE)
                 {
-                    farPlaces++;
+                    categoryScore.setFarPlaces(categoryScore.getFarPlaces() + 1);
                 }
-               
+
+                scores.put(category, categoryScore);
+                
             }
         }
-        //return Map.of("category", category, "score", String.valueOf(score), "closePlaces", String.valueOf(closePlaces), "mediumPlaces", String.valueOf(mediumPlaces), "farPlaces", String.valueOf(farPlaces));
-        Map<String, String> categoryScore = new HashMap<String, String>();
-        categoryScore.put("category", category.toString());
-        categoryScore.put("score", String.valueOf(score));
-        categoryScore.put("closePlaces", String.valueOf(closePlaces));
-        categoryScore.put("mediumPlaces", String.valueOf(mediumPlaces));
-        categoryScore.put("farPlaces", String.valueOf(farPlaces));
-
-        System.out.println("Category Score: " + categoryScore);
-
-        return categoryScore;
-        
     }
-
-    /**
-     * This method calculates the overall walkability score of a location.
-     * 
-     * The score is calculated by summing the walkability significance scores of each place in the location.
-     * 
-     * @param places - The list of places in the location
-     * @return double - The overall walkability score of the location
-     */
-    public double calculateOverallScore(List<Location> places) {
-            
-        double score = 0.0;
-
-        for (Location place : places)
-        {
-            score += calculateLocationScore(place);
-        }
-
-        return score;
-    }
-
-    /**
-     * This method calculates the walkability score of a location respective to each category of place.
-     * 
-     * The score is calculated by summing the walkability significance scores of each place in the location that is of the specified category.
-     * 
-     * @param places - The list of places in the location
-     * @return Map<String, String> - The walkability score of the location respective to each category of place
-     */
-    public Map<String, String> calculateCategoryScores(List<Location> places) {
-       
-        Map<String, String> scores = new HashMap<String, String>();
-
-        for (PlaceType category : CATEGORY_CONSTANTS.keySet()) // Use CATEGORY_CONSTANTS key set
-        {
-            Map<String, String> categoryScore = calculateCategoryScore(places, category);
-            scores.put(category.toString(), categoryScore.toString());
-        }
-
-        return scores;
-    }
-
 
     /**
      * This method retrieves the category of a place.
@@ -286,6 +367,22 @@ public class LocationManager {
             }
         }
         return null;
+    }
+
+
+    public static void main(String[] args) {
+        APIManager apiManager = new APIManager();
+        LocationManager locationManager = new LocationManager(apiManager);
+
+        Dotenv dotenv = Dotenv.load();
+        String testAddress = dotenv.get("TEST_ADDRESS");
+        //testAddress = "5 Chome-11-18 Hiyoshi, Kohoku Ward, Yokohama, Kanagawa 223-0061, Japan";
+        //testAddress = "2300 Alloway Ct, Virginia Beach, VA 23454";
+        //testAddress = "4 Chome-2-8 Shibakoen, Minato City, Tokyo 105-0011, Japan";
+
+        //Map<String, String> mappy = locationManager.getPlaces(testAddress, false);
+        System.out.println("\n\n\n");
+        System.out.println(locationManager.getScore(testAddress, false));
     }
   
     

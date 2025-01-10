@@ -125,5 +125,88 @@ public class Location {
 
         return "{\"name\":\"" + name + "\",\"address\":\"" + address + "\",\"types\":" + typesString + ",\"distance\":" + (distance != null ? "\"" + distance + "\"" : null) + "}";
     }
+
+
+    /**
+     * Parses the distance to a double. The distance is expected to be in the format "123 km" or "123 m" or "123 mi" or "123 ft".
+     * 
+     * @param distance
+     * @return
+     */
+    public static double parseDistance(String distance) {
+        
+        // Remove trailing " km" or " m" or " mi" or etc.
+
+        if (distance == null) {
+            return 0;
+        }
+
+        distance = distance.trim();
+
+        if (distance.endsWith(" km")) {
+            distance = distance.substring(0, distance.length() - 3);
+        } else if (distance.endsWith(" m")) {
+            distance = distance.substring(0, distance.length() - 2);
+        } else if (distance.endsWith(" mi")) {
+            distance = distance.substring(0, distance.length() - 3);
+        } else if (distance.endsWith(" ft")) {
+            distance = distance.substring(0, distance.length() - 3);
+        } else if (distance.endsWith(" miles")) {
+            distance = distance.substring(0, distance.length() - 6);
+        } else if (distance.endsWith(" kilometers")) {
+            distance = distance.substring(0, distance.length() - 11);
+        } else if (distance.endsWith(" meters")) {
+            distance = distance.substring(0, distance.length() - 7);
+        } else if (distance.endsWith(" feet")) {
+            distance = distance.substring(0, distance.length() - 5);
+        }
+
+        return Double.parseDouble(distance);
+    }
+
+
+    public boolean equals(Location location) {
+        return this.name.equals(location.getName()) && this.address.equals(location.getAddress()) && Arrays.equals(this.types, location.getTypes()) && this.distance.equals(location.getDistance());
+    }
+
+    public boolean greaterThan(Location location) {
+
+        if (this.distance == null || location.getDistance() == null) {
+            return false;
+        }
+
+        return parseDistance(distance) > parseDistance(location.getDistance());
+    }
+
+    public boolean lessThan(Location location) {
+
+        if (this.distance == null || location.getDistance() == null) {
+            return false;
+        }
+
+        return parseDistance(distance) < parseDistance(location.getDistance());
+    }
+
+    public boolean greaterThanOrEqualTo(Location location) {
+
+        if (this.distance == null || location.getDistance() == null) {
+            return false;
+        }
+
+        return parseDistance(distance) >= parseDistance(location.getDistance());
+    }
+
+    public boolean lessThanOrEqualTo(Location location) {
+
+        if (this.distance == null || location.getDistance() == null) {
+            return false;
+        }
+
+        return parseDistance(distance) <= parseDistance(location.getDistance());
+    }
+
+    public boolean isNull() {
+        return this.name == null && this.address == null && this.types == null && this.distance == null;
+    }
     
 }

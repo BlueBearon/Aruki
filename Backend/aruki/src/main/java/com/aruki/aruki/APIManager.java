@@ -2,23 +2,26 @@ package com.aruki.aruki;
 
 // Google Maps API Libraries
 import com.google.maps.GeoApiContext;
+import com.google.maps.GeocodingApi;
 import com.google.maps.PlacesApi;
 import com.google.maps.model.PlaceType;
+import com.google.maps.model.LatLng;
 import com.google.maps.DistanceMatrixApi;
 import com.google.maps.model.DistanceMatrix;
-import com.google.maps.model.DistanceMatrixRow;
-import com.google.maps.model.LatLng;
+import com.google.maps.model.DistanceMatrixElement;
+import com.google.maps.model.GeocodingResult;
 import com.google.maps.model.PlacesSearchResponse;
 import com.google.maps.model.PlacesSearchResult;
 import com.google.maps.model.TravelMode;
 
-import io.github.cdimascio.dotenv.Dotenv;
+// Third Party Libraries
+import io.github.cdimascio.dotenv.Dotenv; // For loading .env file
 
-import java.io.FileNotFoundException;
 // Java Libraries
 import java.util.ArrayList;
 import java.util.List;
 import java.util.random.RandomGenerator;
+import java.io.FileNotFoundException;
 
 /**
  * APIManager is responsible for managing API calls to the Google Maps API and Distance Matrix API and providing sample data if necessary.
@@ -28,6 +31,7 @@ public class APIManager {
 
     private String apiKey;
     private GeoApiContext context;
+    private final int searchRadius = 2000; // Search radius in meters
 
 
     public APIManager(){
@@ -77,20 +81,57 @@ public class APIManager {
      * @param test whether to use sample data for testing
      * @return a list of places matching the category near the location
      */
-    public List<Location> retrievePlacesOfCategory(String location, PlaceType category, boolean test) {
+    public List<Location> oldretrievePlacesOfCategory(String location, PlaceType category, boolean test) {
         
-        if (test) 
+        if (test) // If testing, use sample data
         {
             return sampleData_retrievePlacesOfCategory(location, category);
         }
         else
         {
             try{
-                // category is a string for the PlaceType
-                PlacesSearchResponse response = PlacesApi.textSearchQuery(context, location).type(category).await();
+                PlacesSearchResponse response = PlacesApi.textSearchQuery(context, location).type(category).radius(searchRadius).await(); // Search for places of the specified category near the location
+                List<Location> places = new ArrayList<>();
+                for (PlacesSearchResult result : response.results) { // Add each place to the list
+                    places.add(new Location(result.name, result.formattedAddress, result.types));
+                }
+                return places;
+            } catch (Exception e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+    }
+
+
+    public List<Location> retrievePlacesOfCategory(String location, PlaceType category, boolean test) {
+        
+        if (test) // If testing, use sample data
+        {
+            return sampleData_retrievePlacesOfCategory(location, category);
+        }
+        else
+        {
+            try{
+
+                GeocodingResult[] results = GeocodingApi.geocode(context, location).await(); // Get the latitude and longitude of the location
+
+                if (results.length == 0)
+                {
+                    return null;
+                }
+
+                //Get the latitude and longitude of the location
+                LatLng latLng = results[0].geometry.location;
+
+                //location is an address, get the latitude and longitude of the location
+                // Get latlng of location, Don't know how
+
+                PlacesSearchResponse response = PlacesApi.nearbySearchQuery(context, latLng).type(category).radius(searchRadius).await(); // Search for places of the specified category near the location
                 List<Location> places = new ArrayList<>();
                 for (PlacesSearchResult result : response.results) {
-                    places.add(new Location(result.name, result.formattedAddress, result.types));
+                    String address = (result.formattedAddress != null) ? result.formattedAddress : result.vicinity;
+                    places.add(new Location(result.name, address, result.types));
                 }
                 return places;
             } catch (Exception e) {
@@ -117,15 +158,22 @@ public class APIManager {
         else
         {
             List<String> distances = new ArrayList<>();
+
+
             try {
-                DistanceMatrix matrix = DistanceMatrixApi.newRequest(context)
+                DistanceMatrix matrix = DistanceMatrixApi.newRequest(context) // Get walking distances from the origin address to each destination address
                         .origins(originAddress)
                         .destinations(placeAddresses.toArray(new String[0]))
                         .mode(TravelMode.WALKING)
                         .await();
 
-                for (DistanceMatrixRow row : matrix.rows) {
-                    distances.add(row.elements[0].distance.humanReadable);
+                for (DistanceMatrixElement element : matrix.rows[0].elements) {
+
+                    if(element.distance != null)
+                        distances.add(element.distance.humanReadable);
+                    else // Absurdly large distance so that it is filtered out
+                        distances.add("1000 km");
+                        
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -256,17 +304,16 @@ public class APIManager {
 
         Dotenv dotenv = Dotenv.load();
 
+        boolean test = false;
+
         final String testAddress = dotenv.get("TEST_ADDRESS");
 
-        final double searchRadius = 2.0; //miles
-
         final PlaceType[] categories = LocationManager.CATEGORY_CONSTANTS.keySet().toArray(new PlaceType[0]);
-
-        /* 
-        List<Location> places = apiManager.retrievePlacesOfCategory(testAddress, categories[0], false);
+    
+        List<Location> places = apiManager.retrievePlacesOfCategory(testAddress, categories[0], test);
 
         for (Location place : places) {
-            System.out.println(place.getName() + " - " + place.getAddress());
+            System.out.println(place);
         }
 
         System.out.println();
@@ -279,13 +326,12 @@ public class APIManager {
 
         System.out.println();
 
-        List<String> walkingDistances = apiManager.getWalkingDistances(testAddress, placeAddresses, false);
+        List<String> walkingDistances = apiManager.getWalkingDistances(testAddress, placeAddresses, test);
 
         for (String distance : walkingDistances) {
             System.out.println(distance);
         }
 
-        */
 
 
     }
@@ -301,6 +347,7 @@ public class APIManager {
     {
         List<String> addressList = new ArrayList<>();
         for (Location location : locations) {
+            System.out.println(location.getAddress());
             addressList.add(location.getAddress());
         }
         return addressList;

@@ -61,10 +61,9 @@ public class APIController {
     public ResponseEntity<Map<String, String>> getPlaces(@RequestParam String location)
     {
 
-        Map<String, String> result = googleMapsAPIManager.getPlaces(location);
+        Map<String, String> result = googleMapsAPIManager.getPlaces(location, false);
 
-        //return new ResponseEntity<>(result, HttpStatus.OK);
-        return notImplementedOverride();
+        return new ResponseEntity<>(result, HttpStatus.OK);
 
     }
 
@@ -82,10 +81,10 @@ public class APIController {
     public ResponseEntity<Map<String, String>> getScore(@RequestParam String location)
     {
 
-        Map<String, String> result = googleMapsAPIManager.getScore(location);
+        Map<String, String> result = googleMapsAPIManager.getScore(location, false);
 
-        //return new ResponseEntity<>(result, HttpStatus.OK);
-        return notImplementedOverride();
+        return new ResponseEntity<>(result, HttpStatus.OK);
+
 
     }
 
