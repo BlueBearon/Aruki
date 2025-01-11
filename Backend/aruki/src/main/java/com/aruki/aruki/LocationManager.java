@@ -1,5 +1,6 @@
 package com.aruki.aruki;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -12,7 +13,7 @@ import java.util.concurrent.Future;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-
+import com.google.maps.errors.ApiException;
 import com.google.maps.model.PlaceType;
 
 import io.github.cdimascio.dotenv.Dotenv;
@@ -22,72 +23,6 @@ import io.github.cdimascio.dotenv.Dotenv;
 
 
 public class LocationManager {
-
-
-    private class CategoryScore
-    {
-        public String category;
-        public double score;
-        public int closePlaces;
-        public int mediumPlaces;
-        public int farPlaces;
-
-        public CategoryScore(String category, double score, int closePlaces, int mediumPlaces, int farPlaces)
-        {
-            this.category = category;
-            this.score = score;
-            this.closePlaces = closePlaces;
-            this.mediumPlaces = mediumPlaces;
-            this.farPlaces = farPlaces;
-        }
-
-        public double getScore()
-        {
-            return this.score;
-        }
-
-        public int getClosePlaces()
-        {
-            return this.closePlaces;
-        }
-
-        public int getMediumPlaces()
-        {
-            return this.mediumPlaces;
-        }
-
-        public int getFarPlaces()
-        {
-            return this.farPlaces;
-        }
-
-
-        public void setScore(double score)
-        {
-            this.score = score;
-        }
-
-        public void setClosePlaces(int closePlaces)
-        {
-            this.closePlaces = closePlaces;
-        }
-
-        public void setMediumPlaces(int mediumPlaces)
-        {
-            this.mediumPlaces = mediumPlaces;
-        }
-
-        public void setFarPlaces(int farPlaces)
-        {
-            this.farPlaces = farPlaces;
-        }
-
-        public String toString()
-        {
-            return "{\"category\":\"" + category + "\",\"score\":\"" + score + "\",\"closePlaces\":\"" + closePlaces + "\",\"mediumPlaces\":\"" + mediumPlaces + "\",\"farPlaces\":\"" + farPlaces + "\"}";
-        }
-    }
-
 
     // Constants/weights for each category of place
     public static final Map<PlaceType, Double> CATEGORY_CONSTANTS = Map.of(
@@ -127,27 +62,35 @@ public class LocationManager {
 
     /**
      * This method retrieves places near the location.
+     * 
      * @param location - The location to retrieve places near
      * @param test - Whether to use test data
-     * @return Map<String, String> - The list of places near the location
+     * @return List<Location> - The list of places near the location
+     * @throws ApiException - If there is an error with the API request
+     * @throws InterruptedException - If the thread is interrupted
+     * @throws IOException - If there is an I/O error
      */
-    public Map<String, String> getPlaces(String location, boolean test) {
+    public List<Location> getPlaces(String location, boolean test) throws ApiException, InterruptedException, IOException
+    {
         List<Location> places = retrievePlaces(location, test);
-        return Map.of("places", places.toString());
+        return places;
     }
     
     /**
      * This method retrieves places of each category near the location.
      * 
      * The method uses the Google Maps API to retrieve places of each category near the location.
-     * 
      * The method then verifies the walking distances of the places.
      * 
      * @param location - The location to retrieve places near
      * @param test - Whether to use test data
      * @return List<Location> - The list of places near the location
+     * @throws ApiException - If there is an error with the API request
+     * @throws InterruptedException - If the thread is interrupted
+     * @throws IOException - If there is an I/O error
      */
-    private List<Location> retrievePlaces(String location, boolean test) {
+    private List<Location> retrievePlaces(String location, boolean test) throws ApiException, InterruptedException, IOException
+     {
         
         List<Location> places = new ArrayList<Location>();
         ExecutorService executor = Executors.newFixedThreadPool(CATEGORY_CONSTANTS.size());
@@ -161,107 +104,154 @@ public class LocationManager {
         for (Future<List<Location>> future : futures) {
             try {
                 places.addAll(future.get());
-            } catch (InterruptedException | ExecutionException e) {
+            } 
+            catch (InterruptedException e) {
                 e.printStackTrace();
+            }
+            catch (ExecutionException e) {
+                
+                Throwable cause = e.getCause();
+                if (cause instanceof ApiException) {
+                    throw (ApiException) cause;
+                } else if (cause instanceof IOException) {
+                    throw (IOException) cause;
+                } else if (cause instanceof InterruptedException) {
+                    Thread.currentThread().interrupt(); // Restore interrupted status
+                    throw (InterruptedException) cause;
+                } else {
+                    throw new RuntimeException(cause);
+                }
             }
         }
 
         executor.shutdown();
 
-        System.out.println("Places Before Walkability Check: ");
-
-        for (Location place : places) {
-            System.out.println(place);
-        }
-
-        System.out.println("Places After Walkability Check: ");
 
         // Verify walking distances of places
         places = verifyWalkingDistances(location, places, test);
 
-        for (Location place : places) {
-            System.out.println(place);
-        }
-
         return places;
     }
+
 
     /**
      * This method verifies the walking distances of the places in the location.
      * 
-     * This function is necessary as distance as the crow flies often does equal the actual walking distance.
-     * 
+     * This function is necessary as distance as the crow flies often does not equal the actual walking distance.
      * If the walking distance is greater than the maximum search radius, the place is removed from the list of places.
      * 
-     * @param places
-     * @return
+     * @param originAddress - The address of the origin
+     * @param places - The list of places to verify the walking distances of
+     * @param test - Whether to use test data
+     * @return List<Location> - The list of places with verified walking distances
+     * @throws ApiException - If there is an error with the API request
+     * @throws InterruptedException - If the thread is interrupted
+     * @throws IOException - If there is an I/O error
      */
-    private List<Location> verifyWalkingDistances(String originAddress, List<Location> places, boolean test) {
+    private List<Location> verifyWalkingDistances(String originAddress, List<Location> places, boolean test) throws ApiException, InterruptedException, IOException
+    {
 
         List<Location> verifiedPlaces = new ArrayList<Location>();
-
-        int initialCount = places.size();
-        int removedCount = 0;
-        int finalCount = 0;
 
         try
         {
 
-            //API Request: Send Origin Address, and each place's address to Google Maps API to get walking distance
-            List<String> placeAddresses = new ArrayList<String>();
-            for (Location place : places)
-            {
-                placeAddresses.add(place.getAddress());
+            int numBatches = (int) Math.ceil((double) places.size() / BATCH_SIZE);
+
+            ExecutorService executor = Executors.newFixedThreadPool(numBatches);
+
+            List<Future<List<Location>>> futures = new ArrayList<>();
+
+            for (int i = 0; i < places.size(); i += BATCH_SIZE) {
+                int start = i;
+                int end = Math.min(start + BATCH_SIZE, places.size());
+                Callable<List<Location>> task = () -> verifyWalkingDistancesWithThreadsSublist(originAddress, places, start, end, test);
+                futures.add(executor.submit(task));
             }
 
-            int totalPlaces = placeAddresses.size();
-            for (int i = 0; i < totalPlaces; i += BATCH_SIZE) {
-                int end = Math.min(i + BATCH_SIZE, totalPlaces);
-                List<String> batch = placeAddresses.subList(i, end);
-                List<String> walkingDistances = apiManager.getWalkingDistances(originAddress, batch, test);
-
-                for (int j = 0; j < batch.size(); j++) {
-                    Location place = places.get(i + j);
-                    String walkingDistance = walkingDistances.get(j);
-                    if (Location.parseDistance(walkingDistance) <= SEARCH_RADIUS) {
-                        place.setDistance(walkingDistance);
-                        verifiedPlaces.add(place);
-                    }
-                    else
-                    {
-                        System.out.println("Place " + place.getName() + " removed due to distance: " + walkingDistance + "\n");
-                        removedCount++;
+            for (Future<List<Location>> future : futures) {
+                try {
+                    verifiedPlaces.addAll(future.get());
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                catch (ExecutionException e) {
+                    Throwable cause = e.getCause();
+                    if (cause instanceof ApiException) {
+                        throw (ApiException) cause;
+                    } else if (cause instanceof IOException) {
+                        throw (IOException) cause;
+                    } else if (cause instanceof InterruptedException) {
+                        Thread.currentThread().interrupt(); // Restore interrupted status
+                        throw (InterruptedException) cause;
+                    } else {
+                        throw new RuntimeException(cause);
                     }
                 }
             }
 
-            finalCount = verifiedPlaces.size();
-
-            System.out.println("\n\n Places Removed: " + removedCount + " out of " + initialCount + " total places. Final Count is " + finalCount + "\n\n");
-
+            executor.shutdown();
             return verifiedPlaces; 
         }
         catch (Exception e)
         {
-            return places;
+            throw e;
         }
 
+    }
+
+
+    private List<Location> verifyWalkingDistancesWithThreadsSublist(String originAddress, List<Location> places, int start, int end, boolean test)
+    {
+        List<Location> verifiedPlaces = new ArrayList<Location>();
+
+        List<Location> sublist = places.subList(start, end);
+
+        try
+        {
+            List<String> placeAddresses = new ArrayList<String>();
+            for (Location place : sublist)
+            {
+                placeAddresses.add(place.getAddress());
+            }
+
+            List<String> walkingDistances = apiManager.getWalkingDistances(originAddress, placeAddresses, test);
+
+            for (int j = 0; j < sublist.size(); j++) {
+                Location place = sublist.get(j);
+                String walkingDistance = walkingDistances.get(j);
+                if (Location.parseDistance(walkingDistance) <= SEARCH_RADIUS) {
+                    place.setDistance(walkingDistance);
+                    verifiedPlaces.add(place);
+                }
+            }
+
+            return verifiedPlaces;
+        }
+        catch (Exception e)
+        {
+            return sublist;
+        }
     }
 
     /**
      * This method retrieves the score of the location.
      * 
      * The method retrieves the places near the location.
-     * 
      * The method calculates the score of the location based on the places near the location.
      * 
      * @param location - The location to retrieve the score of
      * @param test - Whether to use test data
-     * @return Map<String, String> - The score of the location
+     * @return ScoreResponse - The score of the location
+     * @throws ApiException - If there is an error with the API request
+     * @throws InterruptedException - If the thread is interrupted
+     * @throws IOException - If there is an I/O error
      */
-    public Map<String, String> getScore(String location, boolean test)
+    public ScoreResponse getScore(String location, boolean test) throws ApiException, InterruptedException, IOException
     {
         List<Location> places = retrievePlaces(location, test);
+
+        ScoreResponse result = new ScoreResponse();
 
         Map<String, CategoryScore> scores = new HashMap<String, CategoryScore>();
 
@@ -279,20 +269,18 @@ public class LocationManager {
             calculateLocationScore(place, scores);
         }
 
-        Map<String, String> result = new HashMap<String, String>();
-
         double walkability = scores.get("overall").getScore();
 
-        result.put("walkability", String.valueOf(walkability));
+        result.setWalkabilityScore(walkability);
 
-        Map<String, String> categoryScores = new HashMap<String, String>();
+        List<CategoryScore> categoryScores = new ArrayList<CategoryScore>();
 
         for (PlaceType category : CATEGORY_CONSTANTS.keySet())
         {
-            categoryScores.put(category.toString(), scores.get(category.toString()).toString());
+            categoryScores.add(scores.get(category.toString()));
         }
 
-        result.put("scores", categoryScores.toString());
+        result.setCategoryScores(categoryScores);
 
         return result;
     }
@@ -333,7 +321,8 @@ public class LocationManager {
 
                 //update category score (no need to consider CategoryConstants, but do need to update close, medium, far counts)
                 CategoryScore categoryScore = scores.get(category);
-                categoryScore.setScore(categoryScore.getScore() + distancePenalty);
+                double newCategoryScore = Math.round((categoryScore.getScore() + distancePenalty)* 100.0) / 100.0;
+                categoryScore.setScore(newCategoryScore);
 
                 if (distance <= CLOSE_DISTANCE)
                 {
@@ -370,19 +359,31 @@ public class LocationManager {
     }
 
 
+    public boolean locationExists(String location) {
+        return apiManager.locationExists(location);
+    }
+
     public static void main(String[] args) {
-        APIManager apiManager = new APIManager();
-        LocationManager locationManager = new LocationManager(apiManager);
 
-        Dotenv dotenv = Dotenv.load();
-        String testAddress = dotenv.get("TEST_ADDRESS");
-        //testAddress = "5 Chome-11-18 Hiyoshi, Kohoku Ward, Yokohama, Kanagawa 223-0061, Japan";
-        //testAddress = "2300 Alloway Ct, Virginia Beach, VA 23454";
-        //testAddress = "4 Chome-2-8 Shibakoen, Minato City, Tokyo 105-0011, Japan";
+        try
+        {
+            APIManager apiManager = new APIManager();
+            LocationManager locationManager = new LocationManager(apiManager);
 
-        //Map<String, String> mappy = locationManager.getPlaces(testAddress, false);
-        System.out.println("\n\n\n");
-        System.out.println(locationManager.getScore(testAddress, false));
+            Dotenv dotenv = Dotenv.load();
+            String testAddress = dotenv.get("TEST_ADDRESS");
+            //testAddress = "5 Chome-11-18 Hiyoshi, Kohoku Ward, Yokohama, Kanagawa 223-0061, Japan";
+            //testAddress = "2300 Alloway Ct, Virginia Beach, VA 23454";
+            //testAddress = "4 Chome-2-8 Shibakoen, Minato City, Tokyo 105-0011, Japan";
+
+            System.out.println(locationManager.getPlaces(testAddress, false));
+            System.out.println("\n\n\n");
+            System.out.println(locationManager.getScore(testAddress, false));
+        }
+        catch (Exception e)
+        {
+            System.out.println("Error: " + e.getMessage());
+        }
     }
   
     

@@ -2,12 +2,16 @@ package com.aruki.aruki;
 
 import org.springframework.web.bind.annotation.RestController;
 
+import com.google.maps.errors.ApiException;
+
+import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 /**
@@ -41,7 +45,7 @@ public class APIController {
      * 
      * @return ResponseEntity<Map<String, String>> This returns a map with the status of the API.
      */
-    @RequestMapping("/areWeLive")
+    @GetMapping("/areWeLive")
     public ResponseEntity<Map<String, String>> areWeLive()
     {
         return new ResponseEntity<>(Map.of("status", "ok"), HttpStatus.OK);
@@ -54,16 +58,43 @@ public class APIController {
      * 
      * Example Response: { "places": [ { "name": "McDonalds", "distance": "0.5 miles", "category": "restaurant" }, { "name": "Central Park", "distance": "1.2 miles", "category": "park" } ] }
      * 
+     * If Exception is thrown, send error code corresponding to the error.
+     * 301 - API Exception - Error with Google Maps API
+     * 302 
+     * 
      * @param location - The location of the user/where the user wants to investigate
      * @return ResponseEntity<Map<String, String>> - Map containing the list of locations, distances, and categories of the corresponding places.
      */
-    @RequestMapping("/getPlaces")
-    public ResponseEntity<Map<String, String>> getPlaces(@RequestParam String location)
+    @GetMapping("/getPlaces")
+    public ResponseEntity<?> getPlaces(@RequestParam String location)
     {
 
-        Map<String, String> result = googleMapsAPIManager.getPlaces(location, false);
+        if(!googleMapsAPIManager.locationExists(location))
+        {
+            return new ResponseEntity<>(Map.of("status", "invalid location"), HttpStatus.BAD_REQUEST);
+        }
 
-        return new ResponseEntity<>(result, HttpStatus.OK);
+
+        try{
+            List<Location> result = googleMapsAPIManager.getPlaces(location, false);
+
+            return ResponseEntity.ok(result);
+        }
+        catch (ApiException e)
+        {
+            return new ResponseEntity<>(Map.of("status", "API Exception"), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        catch (InterruptedException e)
+        {
+            return new ResponseEntity<>(Map.of("status", "interrupted"), HttpStatus.SERVICE_UNAVAILABLE);
+        }
+        catch (IOException e)
+        {
+            return new ResponseEntity<>(Map.of("status", "IO Exception"), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        catch (Exception e) {
+            return new ResponseEntity<>(Map.of("status", "unknown error"), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
 
     }
 
@@ -77,14 +108,35 @@ public class APIController {
      * @param location - The location of the user/where the user wants to investigate
      * @return ResponseEntity<Map<String, String>> - Map containing the walkability score of the location, as well as the score respective to each category of place.
      */
-    @RequestMapping("/getScore")
-    public ResponseEntity<Map<String, String>> getScore(@RequestParam String location)
+    @GetMapping("/getScore")
+    public ResponseEntity<?> getScore(@RequestParam String location)
     {
+        if(!googleMapsAPIManager.locationExists(location))
+        {
+            return new ResponseEntity<>(Map.of("status", "invalid location"), HttpStatus.BAD_REQUEST);
+        }
 
-        Map<String, String> result = googleMapsAPIManager.getScore(location, false);
+        try
+        {
+            ScoreResponse places = googleMapsAPIManager.getScore(location, false);
 
-        return new ResponseEntity<>(result, HttpStatus.OK);
-
+            return ResponseEntity.ok(places);
+        }
+        catch (ApiException e)
+        {
+            return new ResponseEntity<>(Map.of("status", "API Exception"), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        catch (InterruptedException e)
+        {
+            return new ResponseEntity<>(Map.of("status", "interrupted"), HttpStatus.SERVICE_UNAVAILABLE);
+        }
+        catch (IOException e)
+        {
+            return new ResponseEntity<>(Map.of("status", "IO Exception"), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        catch (Exception e) {
+            return new ResponseEntity<>(Map.of("status", "unknown error"), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
 
     }
 

@@ -4,6 +4,11 @@ import java.util.Arrays;
 
 /**
  * Represents a location as returned by the Google Maps API.
+ * 
+ * String name - the name of the location
+ * String address - the address of the location
+ * String[] types - the types of the location
+ * String distance - the distance to the location
  */
 public class Location {
 

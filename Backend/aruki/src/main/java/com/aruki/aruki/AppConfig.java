@@ -13,7 +13,17 @@ public class AppConfig {
 
     @Bean
     public APIManager apiManager() {
-        return new APIManager();
+
+        try
+        {
+            return new APIManager();
+        } 
+        catch (Exception e) {
+            //print error
+            System.out.println("Error: " + e.getMessage());
+            System.exit(1);
+            return null;
+        }
     }
     
 }

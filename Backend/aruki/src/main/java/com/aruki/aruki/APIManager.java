@@ -4,6 +4,7 @@ package com.aruki.aruki;
 import com.google.maps.GeoApiContext;
 import com.google.maps.GeocodingApi;
 import com.google.maps.PlacesApi;
+import com.google.maps.errors.ApiException;
 import com.google.maps.model.PlaceType;
 import com.google.maps.model.LatLng;
 import com.google.maps.DistanceMatrixApi;
@@ -22,9 +23,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.random.RandomGenerator;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 
 /**
  * APIManager is responsible for managing API calls to the Google Maps API and Distance Matrix API and providing sample data if necessary.
+ * 
+ * @throws FileNotFoundException if the .env file is not found
+ * @throws RuntimeException if the API_KEY is not found in the .env file
  */
 public class APIManager {
 
@@ -34,7 +39,8 @@ public class APIManager {
     private final int searchRadius = 2000; // Search radius in meters
 
 
-    public APIManager(){
+    public APIManager() throws FileNotFoundException, RuntimeException
+    {
 
         this.apiKey = "";
         this.context = null;
@@ -67,8 +73,8 @@ public class APIManager {
 
         } catch (Exception e) 
         {
-            e.printStackTrace();
-            System.exit(1);
+            // pass the exception up the chain
+            throw e;
         }
     }
 
@@ -80,31 +86,12 @@ public class APIManager {
      * @param category the category of places to search for
      * @param test whether to use sample data for testing
      * @return a list of places matching the category near the location
+     * @throws ApiException if an error occurs while making the API request
+     * @throws InterruptedException if the request is interrupted
+     * @throws IOException if an I/O error occurs
      */
-    public List<Location> oldretrievePlacesOfCategory(String location, PlaceType category, boolean test) {
-        
-        if (test) // If testing, use sample data
-        {
-            return sampleData_retrievePlacesOfCategory(location, category);
-        }
-        else
-        {
-            try{
-                PlacesSearchResponse response = PlacesApi.textSearchQuery(context, location).type(category).radius(searchRadius).await(); // Search for places of the specified category near the location
-                List<Location> places = new ArrayList<>();
-                for (PlacesSearchResult result : response.results) { // Add each place to the list
-                    places.add(new Location(result.name, result.formattedAddress, result.types));
-                }
-                return places;
-            } catch (Exception e) {
-                e.printStackTrace();
-                return null;
-            }
-        }
-    }
-
-
-    public List<Location> retrievePlacesOfCategory(String location, PlaceType category, boolean test) {
+    public List<Location> retrievePlacesOfCategory(String location, PlaceType category, boolean test) throws ApiException, InterruptedException, IOException
+    {
         
         if (test) // If testing, use sample data
         {
@@ -135,8 +122,7 @@ public class APIManager {
                 }
                 return places;
             } catch (Exception e) {
-                e.printStackTrace();
-                return null;
+                throw e;
             }
         }
     }
@@ -148,8 +134,12 @@ public class APIManager {
      * @param placeAddresses the list of destination addresses
      * @param test whether to use sample data for testing
      * @return a list of walking distances to each destination address
+     * @throws ApiException if an error occurs while making the API request
+     * @throws InterruptedException if the request is interrupted
+     * @throws IOException if an I/O error occurs
      */
-    public List<String> getWalkingDistances(String originAddress, List<String> placeAddresses, boolean test) {
+    public List<String> getWalkingDistances(String originAddress, List<String> placeAddresses, boolean test) throws ApiException, InterruptedException, IOException
+    {
 
         if (test) 
         {
@@ -176,7 +166,7 @@ public class APIManager {
                         
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                throw e;
             }
             
             return distances;
@@ -300,36 +290,41 @@ public class APIManager {
      */
     public static void main(String args[])
     {
-        APIManager apiManager = new APIManager();
 
-        Dotenv dotenv = Dotenv.load();
+        try{
+            APIManager apiManager = new APIManager();
 
-        boolean test = false;
+            Dotenv dotenv = Dotenv.load();
 
-        final String testAddress = dotenv.get("TEST_ADDRESS");
+            boolean test = false;
 
-        final PlaceType[] categories = LocationManager.CATEGORY_CONSTANTS.keySet().toArray(new PlaceType[0]);
-    
-        List<Location> places = apiManager.retrievePlacesOfCategory(testAddress, categories[0], test);
+            final String testAddress = dotenv.get("TEST_ADDRESS");
 
-        for (Location place : places) {
-            System.out.println(place);
-        }
+            final PlaceType[] categories = LocationManager.CATEGORY_CONSTANTS.keySet().toArray(new PlaceType[0]);
+        
+            List<Location> places = apiManager.retrievePlacesOfCategory(testAddress, categories[0], test);
 
-        System.out.println();
+            for (Location place : places) {
+                System.out.println(place);
+            }
 
-        List<String> placeAddresses = generateAddressList(places);
+            System.out.println();
 
-        for (String placeAddress : placeAddresses) {
-            System.out.println(placeAddress);
-        }
+            List<String> placeAddresses = generateAddressList(places);
 
-        System.out.println();
+            for (String placeAddress : placeAddresses) {
+                System.out.println(placeAddress);
+            }
 
-        List<String> walkingDistances = apiManager.getWalkingDistances(testAddress, placeAddresses, test);
+            System.out.println();
 
-        for (String distance : walkingDistances) {
-            System.out.println(distance);
+            List<String> walkingDistances = apiManager.getWalkingDistances(testAddress, placeAddresses, test);
+
+            for (String distance : walkingDistances) {
+                System.out.println(distance);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
 
@@ -351,6 +346,38 @@ public class APIManager {
             addressList.add(location.getAddress());
         }
         return addressList;
+    }
+
+    /**
+     * Check if a location exists in the Google Maps API. Try to get the latitude and longitude of the location.
+     * 
+     * If the location does not exist, return false.
+     * 
+     * Uses the Geocoding API to get the latitude and longitude of the location. If the location does not exist, the Geocoding API will return an empty array.
+     *  
+     * @param location
+     * @return
+     */
+    public boolean locationExists(String location)
+    {
+        try
+        {
+            GeocodingResult[] results = GeocodingApi.geocode(context, location).await(); // Get the latitude and longitude of the location
+
+            if (results.length == 0)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+        catch (Exception e)
+        {
+            return false;
+        }
+
     }
 
     
