@@ -15,22 +15,42 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 /**
- * APIController
+ * The {@code APIController} class is a REST controller that handles HTTP requests for various endpoints related to location-based services.
+ * <p>
+ * This controller provides endpoints to:
+ * <ul>
+ *   <li>Check if the API is live.</li>
+ *   <li>Get a list of places near a specified location, including their distances and categories.</li>
+ *   <li>Get the walkability score of a location, along with scores for different categories of places.</li>
+ * </ul>
+ * </p>
+ * <p>
+ * The controller uses the {@code LocationManager} class to interact with the Google Maps API and retrieve the necessary data.
+ * It handles various exceptions that may occur during the API calls and returns appropriate HTTP status codes and messages.
+ * </p>
+ * <p>
+ * Each endpoint is mapped to a specific HTTP GET request using the {@code @GetMapping} annotation.
+ * </p>
+ * <p>
+ * Example usage:
+ * <pre>
+ *     // Check if the API is live
+ *     ResponseEntity<Map<String, String>> response = apiController.areWeLive();
+ *     System.out.println(response);
+ * </pre>
+ * </p>
+ * <p>
+ * This controller can be used in conjunction with other classes that require location-based services, such as recommendation systems, data visualization tools, or ranking algorithms.
+ * </p>
  * 
- * This class is the main controller for the API. It will handle all the requests and responses. 
- * 
- * The API will have the following endpoints:
- * 
- * 1. /areWeLive - This endpoint will be used to check if the API is live.
- * 
- * 2. /getPlaces - This endpoint will be used to get a list of places, how far away they are from the user, and the category of the place (e.g. restaurant, park, etc.).
- * 
- * 3. /getScore - This endpoint will be used to get the walkability score of a location, as well as the score respective to each category of place.
- * 
- * API is powered by Spring Boot and makes extensive use of the Google Maps API.
- * 
- * @version 1.0
- * @author Chase Packer
+ * @see LocationManager
+ * @see ApiException
+ * @see IOException
+ * @see InterruptedException
+ * @see ResponseEntity
+ * @see GetMapping
+ * @see RequestParam
+ * @see RestController
  */
 @RestController
 public class APIController {

@@ -26,7 +26,68 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 /**
- * APIManager is responsible for managing API calls to the Google Maps API and Distance Matrix API and providing sample data if necessary.
+ * The APIManager class is responsible for managing API calls to the Google Maps API and Distance Matrix API.
+ * It provides methods to retrieve places of specific categories near a given location and to calculate walking distances 
+ * from an origin address to a list of destination addresses. Additionally, it can provide sample data for testing purposes.
+ * 
+ * <p>This class works with the following Google Maps API classes:
+ * <ul>
+ *   <li>{@link com.google.maps.GeoApiContext}</li>
+ *   <li>{@link com.google.maps.GeocodingApi}</li>
+ *   <li>{@link com.google.maps.PlacesApi}</li>
+ *   <li>{@link com.google.maps.DistanceMatrixApi}</li>
+ *   <li>{@link com.google.maps.model.PlaceType}</li>
+ *   <li>{@link com.google.maps.model.LatLng}</li>
+ *   <li>{@link com.google.maps.model.DistanceMatrix}</li>
+ *   <li>{@link com.google.maps.model.DistanceMatrixElement}</li>
+ *   <li>{@link com.google.maps.model.GeocodingResult}</li>
+ *   <li>{@link com.google.maps.model.PlacesSearchResponse}</li>
+ *   <li>{@link com.google.maps.model.PlacesSearchResult}</li>
+ *   <li>{@link com.google.maps.model.TravelMode}</li>
+ * </ul>
+ * 
+ * <p>It also uses the Dotenv library to load environment variables from a .env file, specifically the Google Maps API key.
+ * 
+ * <p>Usage example:
+ * <pre>
+ * {@code
+ * APIManager apiManager = new APIManager();
+ * List<Location> places = apiManager.retrievePlacesOfCategory("New York, NY", PlaceType.RESTAURANT, false);
+ * List<String> distances = apiManager.getWalkingDistances("Central Park, New York, NY", Arrays.asList("Times Square, New York, NY"), false);
+ * }
+ * </pre>
+ * 
+ * <p>Exceptions:
+ * <ul>
+ *   <li>{@link java.io.FileNotFoundException} if the .env file is not found</li>
+ *   <li>{@link java.lang.RuntimeException} if the API_KEY is not found in the .env file</li>
+ *   <li>{@link com.google.maps.errors.ApiException} if an error occurs while making the API request</li>
+ *   <li>{@link java.lang.InterruptedException} if the request is interrupted</li>
+ *   <li>{@link java.io.IOException} if an I/O error occurs</li>
+ * </ul>
+ * 
+ * <p>Methods:
+ * <ul>
+ *   <li>{@link #retrievePlacesOfCategory(String, PlaceType, boolean)}: Retrieves a list of places of a specific category near a given location.</li>
+ *   <li>{@link #getWalkingDistances(String, List, boolean)}: Retrieves walking distances from an origin address to a list of place addresses.</li>
+ *   <li>{@link #locationExists(String)}: Checks if a location exists in the Google Maps API by trying to get the latitude and longitude of the location.</li>
+ * </ul>
+ * 
+ * <p>Sample Data Methods:
+ * <ul>
+ *   <li>{@link #sampleData_retrievePlacesOfCategory(String, PlaceType)}: Provides sample data mimicking the output from the Google Places API.</li>
+ *   <li>{@link #sampleData_getWalkingDistances(String, List)}: Provides sample data mimicking the output from the Google Maps Distance Matrix API.</li>
+ * </ul>
+ * 
+ * <p>Helper Methods:
+ * <ul>
+ *   <li>{@link #generateAddressList(List)}: Generates a list of addresses from a list of Location objects.</li>
+ * </ul>
+ * 
+ * <p>Main Method:
+ * <ul>
+ *   <li>{@link #main(String[])}: Main method for testing how the Google Maps API and Distance Matrix API works before implementing the real methods.</li>
+ * </ul>
  * 
  * @throws FileNotFoundException if the .env file is not found
  * @throws RuntimeException if the API_KEY is not found in the .env file

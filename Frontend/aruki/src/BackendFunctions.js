@@ -102,6 +102,61 @@ export function locationSortDESC(locations) {
 }
 
 /**
+ * Counts the number of locations in each distance vicinity.
+ * @param {Location[]} locations - The list of locations to count.
+ * @returns {number[]} - Returns an array of three numbers: [closePlaces, mediumPlaces, farPlaces].
+ */
+export function countLocationVicinities(locations)
+{
+    const CLOSE_DISTANCE = 0.5; // 500 meters
+    const MEDIUM_DISTANCE = 1.0; // 1 km
+
+    let closePlaces = 0;
+    let mediumPlaces = 0;
+    let farPlaces = 0;
+
+    locations.forEach(location => {
+        let distance = parseDistance(location.distance);
+        if (distance <= CLOSE_DISTANCE) {
+            closePlaces++;
+        } else if (distance <= MEDIUM_DISTANCE) {
+            mediumPlaces++;
+        } else {
+            farPlaces++;
+        }
+    });
+
+    return [closePlaces, mediumPlaces, farPlaces];
+}
+
+/**
+ * List of Google Maps API Place Types used in the project.
+ * @type {string[]}
+ */
+export const placeTypes = [
+    "grocery_or_supermarket",
+    "restaurant",
+    "park",
+    "school",
+    "pharmacy",
+    "gym",
+    "library",
+    "shopping_mall",
+    "movie_theater",
+    "museum"
+];
+
+/**
+ * Filters a list of locations by the given google maps api place type.
+ * @param {Location[]} locations - The list of locations to filter.
+ * @param {string} type - The google maps api place type to filter by.
+ * @returns {Location[]} - Returns a list of locations that match the given type.
+ */
+export function locationSublist(locations, type) {
+    return locations.filter(location => location.types.includes(type));
+}
+
+/**
  * Represents the data of a category score returned by the backend API.
  * 
  * Attributes:

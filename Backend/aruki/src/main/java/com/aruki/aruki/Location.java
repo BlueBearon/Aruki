@@ -3,12 +3,40 @@ package com.aruki.aruki;
 import java.util.Arrays;
 
 /**
- * Represents a location as returned by the Google Maps API.
+ * The {@code Location} class represents a location as returned by the Google Maps API,
+ * including its name, address, types, and distance.
+ * <p>
+ * This class is used to encapsulate the location information, which can be useful in
+ * various contexts such as mapping, navigation, or displaying location data.
+ * </p>
+ * <p>
+ * Each {@code Location} object contains:
+ * <ul>
+ *   <li>A name ({@code String})</li>
+ *   <li>An address ({@code String})</li>
+ *   <li>Types of the location ({@code String[]})</li>
+ *   <li>The distance to the location ({@code String})</li>
+ * </ul>
+ * </p>
+ * <p>
+ * This class provides getter and setter methods for each field, allowing for
+ * easy manipulation and retrieval of the data. Additionally, it overrides the
+ * {@code toString} method to provide a JSON-like string representation of the object.
+ * </p>
+ * <p>
+ * Example usage:
+ * <pre>
+ *     Location location = new Location("Central Park", "New York, NY", new String[]{"park", "tourist_attraction"}, "5 km");
+ *     System.out.println(location);
+ * </pre>
+ * </p>
+ * <p>
+ * This class can be used in conjunction with other classes that require location
+ * information, such as mapping applications, navigation systems, or location-based services.
+ * </p>
  * 
- * String name - the name of the location
- * String address - the address of the location
- * String[] types - the types of the location
- * String distance - the distance to the location
+ * @see java.lang.String
+ * @see java.util.Arrays
  */
 public class Location {
 

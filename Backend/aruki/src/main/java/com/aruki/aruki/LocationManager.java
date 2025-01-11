@@ -1,3 +1,4 @@
+
 package com.aruki.aruki;
 
 import java.io.IOException;
@@ -21,7 +22,41 @@ import io.github.cdimascio.dotenv.Dotenv;
 
 
 
-
+/**
+ * The LocationManager class is responsible for managing and retrieving location-based data.
+ * It interacts with the Google Maps API through the APIManager class to fetch places of various categories
+ * near a specified location. The class also verifies walking distances to these places and calculates
+ * a walkability score for the location based on the proximity and importance of nearby places.
+ * 
+ * <p>
+ * The class uses multithreading to handle API requests efficiently and processes the results to provide
+ * a comprehensive analysis of the location's accessibility to essential and non-essential services.
+ * </p>
+ * 
+ * <p>
+ * Key functionalities include:
+ * <ul>
+ *   <li>Retrieving places of different categories near a specified location</li>
+ *   <li>Verifying walking distances to these places</li>
+ *   <li>Calculating a walkability score based on the proximity and importance of nearby places</li>
+ * </ul>
+ * </p>
+ * 
+ * <p>
+ * The class interacts with the following classes:
+ * <ul>
+ *   <li>{@link APIManager} - To isolate and handle Google Maps API calls</li>
+ *   <li>{@link Location} - To represent individual places and their attributes</li>
+ *   <li>{@link ScoreResponse} - To encapsulate the walkability score and category scores</li>
+ *   <li>{@link CategoryScore} - To represent scores for individual categories of places</li>
+ * </ul>
+ * </p>
+ * 
+ * <p>
+ * The class also uses constants to define weights for different categories of places and thresholds for
+ * distance calculations.
+ * </p>
+ */
 public class LocationManager {
 
     // Constants/weights for each category of place
