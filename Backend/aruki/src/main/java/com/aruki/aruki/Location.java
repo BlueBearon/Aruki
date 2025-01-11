@@ -174,6 +174,24 @@ public class Location {
         return this.name.equals(location.getName()) && this.address.equals(location.getAddress()) && Arrays.equals(this.types, location.getTypes()) && this.distance.equals(location.getDistance());
     }
 
+    public boolean distanceEquals(Location location){
+
+        if (this.distance == null || location.getDistance() == null) {
+            return false;
+        }
+
+        return parseDistance(distance) == parseDistance(location.getDistance());
+    }
+
+    public boolean distanceNotEquals(Location location){
+
+        if (this.distance == null || location.getDistance() == null) {
+            return false;
+        }
+
+        return parseDistance(distance) != parseDistance(location.getDistance());
+    }
+
     public boolean greaterThan(Location location) {
 
         if (this.distance == null || location.getDistance() == null) {
