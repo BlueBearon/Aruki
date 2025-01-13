@@ -16,8 +16,8 @@ export const areWeLive = async () => {
         const response = await axios.get(baseURL + areWeLiveURL);
         return response.data;
     } catch (error) {
-        console.error("Error checking API status:", error);
-        throw new Error("Failed to check API status");  // Improved error message
+        console.error("Error fetching places:", error.message);
+        throw new Error(`Failed to fetch places: ${error.message}`);
     }
 };
 
@@ -51,7 +51,7 @@ export class Location {
  * @returns {Promise<Location[]>} - Returns a list of Location objects.
  * @throws Will throw an error if the API call fails or no data is received.
  */
-export const getPlaces = async (location) => {
+const getPlaces = async (location) => {
     try {
         const response = await axios.get(baseURL + getPlacesURL, {params: {location: location}});
         
@@ -66,8 +66,8 @@ export const getPlaces = async (location) => {
 
         return locations;
     } catch (error) {
-        console.error("Error fetching places:", error);
-        throw new Error("Failed to fetch places");  // Improved error message
+        console.error("Error fetching places:", error.message);
+        throw new Error(`Failed to fetch places: ${error.message}`);
     }
 }
 
@@ -85,7 +85,7 @@ export function parseDistance(distance) {
  * Sorts a list of locations by distance in ascending order.
  * @param {Location[]} locations - The list of locations to sort.
  */
-export function locationSort(locations) {
+export function locationDistanceSortASC(locations) {
     locations.sort((a, b) => {
         return parseDistance(a.distance) - parseDistance(b.distance);
     });
@@ -95,10 +95,33 @@ export function locationSort(locations) {
  * Sorts a list of locations by distance in descending order.
  * @param {Location[]} locations - The list of locations to sort.
  */
-export function locationSortDESC(locations) {
+export function locationDistanceSortDESC(locations) {
     locations.sort((a, b) => {
         return parseDistance(b.distance) - parseDistance(a.distance);
     });
+}
+
+/**
+ * Sorts the combined list of locations into a list of locations for each category.
+ * @param {Location[]} locations - The list of locations to sort.
+ * @param {string[]} categories - The list of categories to sort by.
+ * @returns {Location[][]} - Returns a list of locations for each category.
+ */
+function locationCategorySort(locations, categories) {
+    
+    //Create a 2D array to store the locations for each category
+    let sortedLocations = Array(categories.length).fill().map(() => []);
+
+    //Iterate through each location and add it to the corresponding category array
+    locations.forEach(location => {
+        categories.forEach((category, index) => {
+            if (location.types.includes(category)) {
+                sortedLocations[index].push(location);
+            }
+        });
+    });
+
+    return sortedLocations;
 }
 
 /**
@@ -106,7 +129,7 @@ export function locationSortDESC(locations) {
  * @param {Location[]} locations - The list of locations to count.
  * @returns {number[]} - Returns an array of three numbers: [closePlaces, mediumPlaces, farPlaces].
  */
-export function countLocationVicinities(locations)
+function countLocationVicinities(locations)
 {
     const CLOSE_DISTANCE = 0.5; // 500 meters
     const MEDIUM_DISTANCE = 1.0; // 1 km
@@ -130,6 +153,22 @@ export function countLocationVicinities(locations)
 }
 
 /**
+ * Counts the number of locations in each distance vicinity for each category.
+ * @param {Location[][]} sortedLocations - The list of locations sorted by category.
+ * @returns {number[][]} - Returns a 2D array of the number of locations in each distance vicinity for each category.
+ */
+function countLocationVicinitiesByCategories(sortedLocations)
+{
+    let viscinities = [];
+
+    sortedLocations.forEach(locations => {
+        viscinities.push(countLocationVicinities(locations));
+    });
+
+    return viscinities;
+}
+
+/**
  * List of Google Maps API Place Types used in the project.
  * @type {string[]}
  */
@@ -147,13 +186,36 @@ export const placeTypes = [
 ];
 
 /**
- * Filters a list of locations by the given google maps api place type.
- * @param {Location[]} locations - The list of locations to filter.
- * @param {string} type - The google maps api place type to filter by.
- * @returns {Location[]} - Returns a list of locations that match the given type.
+ * Combines all the steps to get the locations, sort them by distance, and sort them by category,
+ * counts the number of locations in each distance vicinity, and returns the results.
+ * @param {string} location - The location to search near.
+ * @returns {Promise<{locations: Location[][], viscinities: number[], viscinitiesByCategories: number[][]}>} - Returns an object with the locations, viscinities, and viscinitiesByCategories.
  */
-export function locationSublist(locations, type) {
-    return locations.filter(location => location.types.includes(type));
+export const getLocations = async (location) => {
+
+    try {
+
+        let locations = await getPlaces(location);
+
+        //Sort the locations by distance in ascending order
+        locationDistanceSortASC(locations);
+
+        //Sort the locations by category
+        let sortedLocations = locationCategorySort(locations, placeTypes);
+
+        //Count the number of locations in each distance vicinity
+        let viscinities = countLocationVicinities(locations);
+
+        //Count the number of locations in each distance vicinity for each category
+        let viscinitiesByCategories = countLocationVicinitiesByCategories(sortedLocations);
+
+        return {locations: sortedLocations, viscinities: viscinities, viscinitiesByCategories: viscinitiesByCategories};
+
+    }
+    catch (error) {
+        console.error("Error fetching places:", error.message);
+        throw new Error(`Failed to fetch places: ${error.message}`);
+    }
 }
 
 /**
@@ -203,7 +265,7 @@ export class ScoreResponse {
  * @returns {Promise<ScoreResponse>} - Returns a ScoreResponse object.
  * @throws Will throw an error if the API call fails or no data is received.
  */
-export const getScore = async (location) => {
+export const getScores = async (location) => {
     try {
         const response = await axios.get(baseURL + getScoreURL, {params: {location: location}});
         
@@ -218,8 +280,8 @@ export const getScore = async (location) => {
 
         return new ScoreResponse(response.data.walkabilityScore, categoryScores);
     } catch (error) {
-        console.error("Error fetching score:", error);
-        throw new Error("Failed to fetch score");  // Improved error message
+        console.error("Error fetching places:", error.message);
+        throw new Error(`Failed to fetch places: ${error.message}`);
     }
 }
 
