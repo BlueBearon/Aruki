@@ -1,10 +1,36 @@
 import axios from 'axios';
 
 //Java Spring Boot API Backend URL
-const baseURL = 'http://localhost:8080/';
+const developmentURL = 'http://localhost:8080/';
+const productionURL = '';
 const areWeLiveURL = 'areWeLive';
 const getPlacesURL = 'getPlaces';
 const getScoreURL = 'getScore';
+
+
+
+function whatIsTheBaseURL()
+{
+    //When running locally, Frontend is running on localhost:3000 and Backend is running on localhost:8080
+    if (window.location.href.includes("localhost:3000")) 
+    {
+        return developmentURL;
+    }
+    else // When running in production, Backend will be running on either Azure or AWS (Haven't decided yet)
+    {
+        // If productionURL is still '', then use the developmentURL
+
+        if (productionURL === '')
+        {
+            return developmentURL;
+        }
+        else
+        {
+            return productionURL
+        }
+    }
+
+}
 
 /**
  * Checks if the backend API is live.
@@ -13,7 +39,7 @@ const getScoreURL = 'getScore';
  */
 export const areWeLive = async () => {
     try {
-        const response = await axios.get(baseURL + areWeLiveURL);
+        const response = await axios.get(whatIsTheBaseURL() + areWeLiveURL);
         return response.data;
     } catch (error) {
         console.error("Error fetching places:", error.message);
@@ -53,7 +79,7 @@ export class Location {
  */
 const getPlaces = async (location) => {
     try {
-        const response = await axios.get(baseURL + getPlacesURL, {params: {location: location}});
+        const response = await axios.get(whatIsTheBaseURL() + getPlacesURL, {params: {location: location}});
         
         if (!response.data) {
             throw new Error("No data received from getPlaces API");
@@ -267,7 +293,7 @@ export class ScoreResponse {
  */
 export const getScores = async (location) => {
     try {
-        const response = await axios.get(baseURL + getScoreURL, {params: {location: location}});
+        const response = await axios.get(whatIsTheBaseURL() + getScoreURL, {params: {location: location}});
         
         if (!response.data) {
             throw new Error("No data received from getScore API");
