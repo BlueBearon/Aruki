@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import { DarkModeContext } from './BasePage.js';
 import { ActiveModeContext } from './BasePage.js';
 import { Location, placeTypes, displayNames } from './BackendFunctions.js';
-import { CategorySection } from './CategorySection.js';
+import CategorySection from './CategorySection.js';
 import clsx from "clsx";
 
 // Tailwind CSS is enabled

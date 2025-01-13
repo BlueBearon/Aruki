@@ -1,6 +1,6 @@
 import React, {useContext} from 'react';
 import { DarkModeContext } from './BasePage.js';
-import { LocationCard } from './LocationCard.js';
+import LocationCard from './LocationCard.js';
 
 // Tailwind CSS is enabled
 

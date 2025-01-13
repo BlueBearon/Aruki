@@ -1,6 +1,6 @@
 import React, {useContext} from 'react';
 import { DarkModeContext } from './BasePage.js';
-import { CategoryScore } from './CategoryScore.js';
+import { CategoryScore } from './BackendFunctions.js';
 
 // Tailwind CSS is enabled
 
