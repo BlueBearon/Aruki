@@ -3,7 +3,7 @@ import { DarkModeContext } from './BasePage.js';
 import AddressScreen from './AddressScreen.js';
 import LoadingScreen from './LoadingScreen.js';
 import ScoreResultScreen from './ScoreResultScreen.js';
-import scoreImage from "./city_background.jpg";
+import ErrorScreen from './ErrorScreen.js';
 
 import clsx from "clsx";
 
@@ -22,13 +22,17 @@ function ScoreActivity() {
 
     // Score Data State
     const [scoreData, setScoreData] = useState(null);
+
+    // Error Data
+    const [errorData, setErrorData] = useState(null);
     
     return (
         <div className={clsx("flex h-full w-full justify-center items-center outline outline-blue-700", darkMode ? "bg-gray-800 text-white" : "bg-white")}>
             <div className="flex h-full w-full mx-auto justify-center items-center">
                 {activityState === 0 && <AddressScreen mode="score" setAddress={setAddress} setActivityState={setActivityState} />}
-                {activityState === 1 && <LoadingScreen setActivityState={setActivityState} />}
+                {activityState === 1 && <LoadingScreen setActivityState={setActivityState} setData={setScoreData} setErrorData={setErrorData} />}
                 {activityState === 2 && <ScoreResultScreen scoreData={scoreData} setActivityState={setActivityState} />}
+                {activityState === 3 && <ErrorScreen errorData={errorData} setActivityState={setActivityState} />}
             </div>
         </div>
     );

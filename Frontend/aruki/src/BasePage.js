@@ -8,6 +8,14 @@ const ActiveModeContext = createContext();
 
 function BasePage() {
     const [darkMode, setDarkMode] = useState(false);
+
+
+    /**
+     * Active Mode State
+     * walk: Walk Mode
+     * score: Score Mode
+     * about: About Screen
+     */
     const [activeMode, setActiveMode] = useState('walk');
 
     const toggleDarkMode = () => {

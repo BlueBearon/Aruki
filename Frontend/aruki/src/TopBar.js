@@ -1,8 +1,8 @@
 import React, { useContext } from 'react';
 import { DarkModeContext, ActiveModeContext } from './BasePage.js';
 import clsx from "clsx";
-import darkModeImage from './dark_mode.svg';
-import lightModeImage from './light-mode.svg';
+import darkModeImage from './assets/dark_mode.svg';
+import lightModeImage from './assets/light-mode.svg';
 
 
 

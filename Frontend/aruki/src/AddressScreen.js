@@ -1,8 +1,8 @@
 import React, { useState, useContext } from 'react';
 import { DarkModeContext } from './BasePage.js';
 import clsx from "clsx";
-import walkImage from './city_background.jpg';
-import scoreImage from './city_background.jpg';
+import walkImage from './assets/city_background.jpg';
+import scoreImage from './assets/city_background.jpg';
 
 // Tailwind CSS is enabled
 
@@ -49,6 +49,7 @@ function AddressScreen({ mode, setAddress, setActivityState }) {
                             "w-1/4 p-2 mt-2 rounded-lg shadow-md hover:scale-105 transition-transform duration-200",
                             darkMode ? "bg-blue-500 text-white hover:bg-blue-400" : "bg-blue-700 text-white hover:bg-blue-600"
                         )}
+                        onClick={submitAddress}
                         >
                         Submit
                     </button>

@@ -7,6 +7,9 @@ const areWeLiveURL = 'areWeLive';
 const getPlacesURL = 'getPlaces';
 const getScoreURL = 'getScore';
 
+export const CLOSE_DISTANCE = 0.5; // 500 meters
+export const MEDIUM_DISTANCE = 1.0; // 1 km
+
 
 
 function whatIsTheBaseURL()
@@ -157,8 +160,6 @@ function locationCategorySort(locations, categories) {
  */
 function countLocationVicinities(locations)
 {
-    const CLOSE_DISTANCE = 0.5; // 500 meters
-    const MEDIUM_DISTANCE = 1.0; // 1 km
 
     let closePlaces = 0;
     let mediumPlaces = 0;
@@ -210,6 +211,20 @@ export const placeTypes = [
     "movie_theater",
     "museum"
 ];
+
+
+export const displayNames = {
+    "grocery_or_supermarket": "Grocery Store",
+    "restaurant": "Restaurant",
+    "park": "Park",
+    "school": "School",
+    "pharmacy": "Pharmacy",
+    "gym": "Gym",
+    "library": "Library",
+    "shopping_mall": "Shopping Mall",
+    "movie_theater": "Movie Theater",
+    "museum": "Museum"
+}
 
 /**
  * Combines all the steps to get the locations, sort them by distance, and sort them by category,
