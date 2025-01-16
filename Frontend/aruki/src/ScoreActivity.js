@@ -30,7 +30,7 @@ function ScoreActivity() {
         <div className={clsx("flex h-full w-full justify-center items-center outline outline-blue-700", darkMode ? "bg-gray-800 text-white" : "bg-white")}>
             <div className="flex h-full w-full mx-auto justify-center items-center">
                 {activityState === 0 && <AddressScreen mode="score" setAddress={setAddress} setActivityState={setActivityState} />}
-                {activityState === 1 && <LoadingScreen setActivityState={setActivityState} setData={setScoreData} setErrorData={setErrorData} />}
+                {activityState === 1 && <LoadingScreen setActivityState={setActivityState} setData={setScoreData} setErrorData={setErrorData} address={address} />}
                 {activityState === 2 && <ScoreResultScreen scoreData={scoreData} setActivityState={setActivityState} />}
                 {activityState === 3 && <ErrorScreen errorData={errorData} setActivityState={setActivityState} />}
             </div>

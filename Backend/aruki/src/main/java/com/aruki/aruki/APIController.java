@@ -78,19 +78,19 @@ public class APIController {
      * 
      * Example Response: { "places": [ { "name": "McDonalds", "distance": "0.5 miles", "category": "restaurant" }, { "name": "Central Park", "distance": "1.2 miles", "category": "park" } ] }
      * 
-     * If Exception is thrown, send error code corresponding to the error.
-     * 301 - API Exception - Error with Google Maps API
-     * 302 
-     * 
      * @param location - The location of the user/where the user wants to investigate
      * @return ResponseEntity<Map<String, String>> - Map containing the list of locations, distances, and categories of the corresponding places.
      */
     @GetMapping("/getPlaces")
     public ResponseEntity<?> getPlaces(@RequestParam String location)
     {
+        System.out.println("*********************************");
+        System.out.println("Recieved getPlaces request for location: " + location + "\n");
 
         if(!googleMapsAPIManager.locationExists(location))
         {
+            System.out.println("Invalid location: " + location);
+            System.out.println("*********************************");
             return new ResponseEntity<>(Map.of("status", "invalid location"), HttpStatus.BAD_REQUEST);
         }
 
@@ -98,21 +98,42 @@ public class APIController {
         try{
             List<Location> result = googleMapsAPIManager.getPlaces(location, false);
 
+            System.out.println("Successfully retrieved places for location: " + location + "\n");
+            System.out.println(result + "\n");
+            System.out.println("*********************************");
+
             return ResponseEntity.ok(result);
         }
         catch (ApiException e)
         {
+
+            System.out.println("API Exception: " + e.getMessage());
+            System.out.println("*********************************");
+
+
             return new ResponseEntity<>(Map.of("status", "API Exception"), HttpStatus.INTERNAL_SERVER_ERROR);
         }
         catch (InterruptedException e)
         {
+
+            System.out.println("Interrupted Exception: " + e.getMessage());
+            System.out.println("*********************************");
+
             return new ResponseEntity<>(Map.of("status", "interrupted"), HttpStatus.SERVICE_UNAVAILABLE);
         }
         catch (IOException e)
         {
+
+            System.out.println("IO Exception: " + e.getMessage());
+            System.out.println("*********************************");
+
             return new ResponseEntity<>(Map.of("status", "IO Exception"), HttpStatus.INTERNAL_SERVER_ERROR);
         }
         catch (Exception e) {
+
+            System.out.println("Unknown Exception: " + e.getMessage());
+            System.out.println("*********************************");
+
             return new ResponseEntity<>(Map.of("status", "unknown error"), HttpStatus.INTERNAL_SERVER_ERROR);
         }
 

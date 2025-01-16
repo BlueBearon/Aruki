@@ -1,8 +1,7 @@
-import React, {useContext} from 'react';
+import React, { useContext } from 'react';
 import { DarkModeContext } from './BasePage.js';
-import { Location, CLOSE_DISTANCE, MEDIUM_DISTANCE } from './BackendFunctions.js';
-
-// Tailwind CSS is enabled
+import { Location, CLOSE_DISTANCE, MEDIUM_DISTANCE, parseDistance } from './BackendFunctions.js';
+import clsx from 'clsx';
 
 /**
  * This component is responsible for displaying the location's name, address, and distance from the user.
@@ -15,18 +14,13 @@ import { Location, CLOSE_DISTANCE, MEDIUM_DISTANCE } from './BackendFunctions.js
  * @param { Location } location
  * @returns LocationCard component that displays the location's name, address, and
  */
-function LocationCard({location}) {
-
-    //location.name
-    //location.address
-    //location.distance
-
+function LocationCard({ location }) {
     const { darkMode } = useContext(DarkModeContext);
 
     const borderColor = (distance) => {
-        if (distance <= CLOSE_DISTANCE) {
+        if (parseDistance(distance) <= CLOSE_DISTANCE) {
             return "border-green-500";
-        } else if (distance <= MEDIUM_DISTANCE) {
+        } else if (parseDistance(distance) <= MEDIUM_DISTANCE) {
             return "border-yellow-500";
         } else {
             return "border-red-500";
@@ -34,15 +28,24 @@ function LocationCard({location}) {
     }
 
     return (
-        <div className={`${darkMode ? "bg-gray-700 text-white" : "bg-white text-black"} ${borderColor(location.distance)} border-2 border-solid rounded-lg p-4 m-4`}>
-            <h1 className="text-2xl font-bold">{location.name}</h1>
-            <p className="text-lg">{location.address}</p>
-            <div className="mt-4">
-                <p className="text-lg">Distance: {location.distance}m</p>
+        <div className={`${darkMode ? "bg-gray-800 text-white" : "bg-white text-gray-900"} 
+                        ${borderColor(location.distance)} border-4 border-solid rounded-lg p-6 m-6 
+                        w-full sm:w-96 shadow-lg transition-all ease-in-out duration-300`}>
+            <h1 className="text-3xl font-semibold mb-2">{location.name}</h1>
+            <p className="text-lg text-gray-500 mb-4">{location.address}</p>
+            <div className="mb-6">
+                <p className="text-lg font-medium">
+                    Distance: <span className="font-bold">{location.distance}</span>
+                </p>
             </div>
+            <a href={`https://www.google.com/maps/search/?api=1&query=${location.address}`} 
+               target="_blank" rel="noreferrer" 
+               className="mt-4 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg 
+                          transition-colors duration-200 ease-in-out transform hover:scale-105">
+                View on Google Maps
+            </a>
         </div>
     );
-
 }
 
 export default LocationCard;

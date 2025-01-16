@@ -21,7 +21,7 @@ function AddressScreen({ mode, setAddress, setActivityState }) {
 
 
     return (
-        <div className={clsx("h-full w-full outline outline-2 rounded-lg p-4 flex flex-col items-center justify-center", darkMode ? "bg-gray-800 text-white" : "bg-white")} style={{backgroundImage: `url(${mode === 'walk' ? walkImage : scoreImage})`, backgroundSize: 'cover', backgroundPosition: 'center', opacity: 0.7}}>
+        <div className={clsx("flex w-full h-screen outline outline-2 rounded-lg p-4 flex-col items-center justify-center", darkMode ? "bg-gray-800 text-white" : "bg-white")} style={{backgroundImage: `url(${mode === 'walk' ? walkImage : scoreImage})`, backgroundSize: 'cover', backgroundPosition: 'center', opacity: 0.7}}>
 
             <div className = {clsx("flex flex-col items-center w-1/2 shadow-lg  border border-gray-300 rounded-lg p-4", darkMode ? "bg-gray-700 text-white" : "bg-white")}>
                 <div className="space-y-4 flex flex-col items-center">

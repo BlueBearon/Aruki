@@ -20,9 +20,9 @@ function ScoreResultScreen({ scoreData, setActivityState }) {
     // Just standard flex
 
     return (
-        <div className={clsx("flex h-full w-full justify-center items-center", darkMode ? "bg-gray-800 text-white" : "bg-white")}>
+        <div className={clsx("flex h-full w-full justify-center items-center mt-8", darkMode ? "bg-gray-800 text-white" : "bg-white")}>
             <div className="flex h-full w-full mx-auto justify-center items-center">
-                <div className="flex flex-col items-center justify-center">
+                <div className="flex h-full flex-col items-center justify-center">
                     <h1 className="text-5xl font-bold">Walkability Score: {scoreData.walkabilityScore}</h1>
                     {scoreData.categoryScores.map((categoryScore, index) => <CategoryScoreCard categoryScore={categoryScore} key={index} />)}
                     <button onClick={() => setActivityState(0)} className="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Back</button>

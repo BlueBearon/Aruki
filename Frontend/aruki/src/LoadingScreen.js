@@ -25,7 +25,7 @@ import clsx from "clsx";
  * @param {*} param0 
  * @returns 
  */
-function LoadingScreen( { setActivityState, setData, setErrorData } ) {
+function LoadingScreen( { setActivityState, setData, setErrorData, address } ) {
 
     const { darkMode } = useContext(DarkModeContext);
     const { activeMode } = useContext(ActiveModeContext);
@@ -34,11 +34,11 @@ function LoadingScreen( { setActivityState, setData, setErrorData } ) {
         const fetchData = async () => {
           try {
             if (activeMode === 'walk') {
-              const locations = await getLocations();
+              const locations = await getLocations(address);
               setData(locations);
             } 
             else if (activeMode === 'score') {
-              const scores = await getScores();
+              const scores = await getScores(address);
               setData(scores);
             }
             setActivityState(2); // Proceed to the next screen

@@ -81,6 +81,15 @@ export class Location {
  * @throws Will throw an error if the API call fails or no data is received.
  */
 const getPlaces = async (location) => {
+
+    // if location is undefined, throw an error saying as such
+    if (location === undefined)
+    {
+        throw new Error("Location is undefined, is not properly being passed to getPlaces");
+    }
+
+
+    console.log("Location sent to getPlaces: " + location);
     try {
         const response = await axios.get(whatIsTheBaseURL() + getPlacesURL, {params: {location: location}});
         
@@ -108,6 +117,20 @@ const getPlaces = async (location) => {
 export function parseDistance(distance) {
     //remove " km" from the distance string
     return parseFloat(distance.substring(0, distance.length - 3));
+}
+
+/**
+ * Converts a distance in kilometers to miles. 
+ * @param {string} km
+ * @returns {string} - The distance in miles i.e. "1.2 miles"
+ */
+export function kmToMiles(km)
+{
+    let kmNumber = parseDistance(km); 
+
+    let milesNumber = kmNumber * 0.621371;
+
+    return milesNumber.toFixed(2) + " miles";
 }
 
 /**

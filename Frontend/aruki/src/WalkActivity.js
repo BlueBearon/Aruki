@@ -26,12 +26,12 @@ function WalkActivity() {
     
     return (
         <div 
-            className={clsx("flex h-full w-full justify-center items-center outline outline-blue-700", darkMode ? "bg-gray-800 text-white" : "bg-white")}
+            className={clsx("flex h-full w-full justify-center items-center overflow-y-auto", darkMode ? "bg-gray-800 text-white" : "bg-white")}
             
         >
-            <div className="flex h-full w-full mx-auto justify-center items-center">
+            <div className="flex h-full w-full justify-center items-center ">
                 {activityState === 0 && <AddressScreen mode="walk" setAddress={setAddress} setActivityState={setActivityState} />}
-                {activityState === 1 && <LoadingScreen setActivityState={setActivityState} setData={setWalkData} setErrorData={setErrorData} />}
+                {activityState === 1 && <LoadingScreen setActivityState={setActivityState} setData={setWalkData} setErrorData={setErrorData} address={address} />}
                 {activityState === 2 && <WalkResultScreen walkData={walkData} setActivityState={setActivityState} />}
                 {activityState === 3 && <ErrorScreen errorData={errorData} setActivityState={setActivityState} />}
             </div>

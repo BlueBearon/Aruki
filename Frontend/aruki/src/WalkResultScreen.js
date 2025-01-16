@@ -23,8 +23,8 @@ function WalkResultScreen({ walkData, setActivityState }) {
     // Just standard flex
 
     return (
-        <div className={clsx("flex h-full w-full justify-center items-center", darkMode ? "bg-gray-800 text-white" : "bg-white")}>
-            <div className="flex h-full w-full mx-auto justify-center items-center">
+        <div className={clsx("flex flex-grow h-full w-full justify-center items-center", darkMode ? "bg-gray-800 text-white" : "bg-white")}>
+            <div className="flex h-full w-full justify-center items-center">
                 <div className="flex flex-col items-center justify-center">
                     {walkData.locations.map((locations, index) => <CategorySection categoryName={displayNames[placeTypes[index]]} locations={locations} viscinities={walkData.viscinitiesByCategories[index]} key={index} />)}
                     <button onClick={() => setActivityState(0)} className="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Back</button>
@@ -32,8 +32,6 @@ function WalkResultScreen({ walkData, setActivityState }) {
             </div>
         </div>
     );
-
-
 }
 
 export default WalkResultScreen;
