@@ -11,28 +11,23 @@ export const CLOSE_DISTANCE = 0.5; // 500 meters
 export const MEDIUM_DISTANCE = 1.0; // 1 km
 
 
-
-function whatIsTheBaseURL()
-{
+/**
+ * Determines the base URL to use for the backend API.
+ * @returns {string} - The base URL to use for the backend API.
+ * @throws Will throw an error if the base URL cannot be determined.
+ */
+function whatIsTheBaseURL() {
     //When running locally, Frontend is running on localhost:3000 and Backend is running on localhost:8080
-    if (window.location.href.includes("localhost:3000")) 
-    {
+    if (window.location.href.includes("localhost:3000")) {
         return developmentURL;
-    }
-    else // When running in production, Backend will be running on either Azure or AWS (Haven't decided yet)
-    {
+    } else {
         // If productionURL is still '', then use the developmentURL
-
-        if (productionURL === '')
-        {
+        if (productionURL === '') {
             return developmentURL;
-        }
-        else
-        {
-            return productionURL
+        } else {
+            return productionURL;
         }
     }
-
 }
 
 /**
@@ -45,19 +40,14 @@ export const areWeLive = async () => {
         const response = await axios.get(whatIsTheBaseURL() + areWeLiveURL);
         return response.data;
     } catch (error) {
-        console.error("Error fetching places:", error.message);
-        throw new Error(`Failed to fetch places: ${error.message}`);
+        console.error("Error checking if API is live:", error.message);
+        throw new Error(`Failed to check if API is live: ${error.message}`);
     }
 };
 
 /**
  * Represents a location returned by the Google Maps API via the backend.
- * 
- * Attributes:
- * - name (string): The name of the location.
- * - address (string): The address of the location.
- * - types (string[]): The types of the location.
- * - distance (string): The distance to the location. i.e. "1.2 km"
+ * @class
  */
 export class Location {
     /**
@@ -81,27 +71,22 @@ export class Location {
  * @throws Will throw an error if the API call fails or no data is received.
  */
 const getPlaces = async (location) => {
-
-    // if location is undefined, throw an error saying as such
-    if (location === undefined)
-    {
+    if (location === undefined) {
         throw new Error("Location is undefined, is not properly being passed to getPlaces");
     }
 
-    if (location === "test")
-    {
-        location = "1029 Sandoval Drive, Virginia Beach, VA 23454"
+    if (location === "test") {
+        location = "1029 Sandoval Drive, Virginia Beach, VA 23454";
     }
-
 
     console.log("Location sent to getPlaces: " + location);
     try {
-        const response = await axios.get(whatIsTheBaseURL() + getPlacesURL, {params: {location: location}});
-        
+        const response = await axios.get(whatIsTheBaseURL() + getPlacesURL, { params: { location: location } });
+
         if (!response.data) {
             throw new Error("No data received from getPlaces API");
         }
-        
+
         let locations = [];
         response.data.forEach(locationData => {
             locations.push(new Location(locationData.name, locationData.address, locationData.types, locationData.distance));
@@ -120,21 +105,17 @@ const getPlaces = async (location) => {
  * @returns {number} - The parsed distance.
  */
 export function parseDistance(distance) {
-    //remove " km" from the distance string
     return parseFloat(distance.substring(0, distance.length - 3));
 }
 
 /**
- * Converts a distance in kilometers to miles. 
- * @param {string} km
- * @returns {string} - The distance in miles i.e. "1.2 miles"
+ * Converts a distance in kilometers to miles.
+ * @param {string} km - The distance in kilometers.
+ * @returns {string} - The distance in miles.
  */
-export function kmToMiles(km)
-{
-    let kmNumber = parseDistance(km); 
-
+export function kmToMiles(km) {
+    let kmNumber = parseDistance(km);
     let milesNumber = kmNumber * 0.621371;
-
     return milesNumber.toFixed(2) + " miles";
 }
 
@@ -165,11 +146,8 @@ export function locationDistanceSortDESC(locations) {
  * @returns {Location[][]} - Returns a list of locations for each category.
  */
 function locationCategorySort(locations, categories) {
-    
-    //Create a 2D array to store the locations for each category
     let sortedLocations = Array(categories.length).fill().map(() => []);
 
-    //Iterate through each location and add it to the corresponding category array
     locations.forEach(location => {
         categories.forEach((category, index) => {
             if (location.types.includes(category)) {
@@ -186,9 +164,7 @@ function locationCategorySort(locations, categories) {
  * @param {Location[]} locations - The list of locations to count.
  * @returns {number[]} - Returns an array of three numbers: [closePlaces, mediumPlaces, farPlaces].
  */
-function countLocationVicinities(locations)
-{
-
+function countLocationVicinities(locations) {
     let closePlaces = 0;
     let mediumPlaces = 0;
     let farPlaces = 0;
@@ -212,8 +188,7 @@ function countLocationVicinities(locations)
  * @param {Location[][]} sortedLocations - The list of locations sorted by category.
  * @returns {number[][]} - Returns a 2D array of the number of locations in each distance vicinity for each category.
  */
-function countLocationVicinitiesByCategories(sortedLocations)
-{
+function countLocationVicinitiesByCategories(sortedLocations) {
     let viscinities = [];
 
     sortedLocations.forEach(locations => {
@@ -240,7 +215,6 @@ export const placeTypes = [
     "museum"
 ];
 
-
 export const displayNames = {
     "grocery_or_supermarket": "Grocery Store",
     "restaurant": "Restaurant",
@@ -259,11 +233,10 @@ export const displayNames = {
  * counts the number of locations in each distance vicinity, and returns the results.
  * @param {string} location - The location to search near.
  * @returns {Promise<{locations: Location[][], viscinities: number[], viscinitiesByCategories: number[][]}>} - Returns an object with the locations, viscinities, and viscinitiesByCategories.
+ * @throws Will throw an error if the API call fails.
  */
 export const getLocations = async (location) => {
-
     try {
-
         let locations = await getPlaces(location);
 
         //Sort the locations by distance in ascending order
@@ -278,24 +251,16 @@ export const getLocations = async (location) => {
         //Count the number of locations in each distance vicinity for each category
         let viscinitiesByCategories = countLocationVicinitiesByCategories(sortedLocations);
 
-        return {locations: sortedLocations, viscinities: viscinities, viscinitiesByCategories: viscinitiesByCategories};
-
-    }
-    catch (error) {
-        console.error("Error fetching places:", error.message);
-        throw new Error(`Failed to fetch places: ${error.message}`);
+        return { locations: sortedLocations, viscinities: viscinities, viscinitiesByCategories: viscinitiesByCategories };
+    } catch (error) {
+        console.error("Error fetching locations:", error.message);
+        throw new Error(`Failed to fetch locations: ${error.message}`);
     }
 }
 
 /**
  * Represents the data of a category score returned by the backend API.
- * 
- * Attributes:
- * - category (string): The category name.
- * - score (number): The score for the category.
- * - closePlaces (number): The number of close places.
- * - mediumPlaces (number): The number of medium-distance places.
- * - farPlaces (number): The number of far places.
+ * @class
  */
 export class CategoryScore {
     /**
@@ -316,6 +281,7 @@ export class CategoryScore {
 
 /**
  * Represents the response from the getScore API.
+ * @class
  */
 export class ScoreResponse {
     /**
@@ -336,21 +302,16 @@ export class ScoreResponse {
  */
 export const getScores = async (location) => {
     try {
-
-        // if location is undefined, throw an error saying as such
-        if (location === undefined)
-        {
+        if (location === undefined) {
             throw new Error("Location is undefined, is not properly being passed to getPlaces");
         }
 
-        if (location === "test")
-        {
-            location = "1029 Sandoval Drive, Virginia Beach, VA 23454"
+        if (location === "test") {
+            location = "1029 Sandoval Drive, Virginia Beach, VA 23454";
         }
 
+        const response = await axios.get(whatIsTheBaseURL() + getScoreURL, { params: { location: location } });
 
-        const response = await axios.get(whatIsTheBaseURL() + getScoreURL, {params: {location: location}});
-        
         if (!response.data) {
             throw new Error("No data received from getScore API");
         }
@@ -362,8 +323,8 @@ export const getScores = async (location) => {
 
         return new ScoreResponse(response.data.walkabilityScore, categoryScores);
     } catch (error) {
-        console.error("Error fetching places:", error.message);
-        throw new Error(`Failed to fetch places: ${error.message}`);
+        console.error("Error fetching scores:", error.message);
+        throw new Error(`Failed to fetch scores: ${error.message}`);
     }
 }
 

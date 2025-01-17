@@ -6,16 +6,22 @@ import clsx from "clsx";
 
 // Tailwind CSS is enabled
 
+/**
+ * Component to display the score results.
+ * 
+ * @param {Object} props - The component props.
+ * @param {Object} props.scoreData - The score data.
+ * @param {number} props.scoreData.walkabilityScore - The walkability score.
+ * @param {Array} props.scoreData.categoryScores - The category scores.
+ * @param {Function} props.setActivityState - Function to set the activity state.
+ * @returns {JSX.Element} The rendered component.
+ */
 function ScoreResultScreen({ scoreData, setActivityState }) {
-
     const { darkMode } = useContext(DarkModeContext);
-
 
     // scoreData: {walkabilityScore: number, categoryScores: CategoryScore[]}
 
     // Use CategoryScoreCard for each category, only needs to pass the categoryScore
-
-
 
     // Just standard flex
 
@@ -37,8 +43,6 @@ function ScoreResultScreen({ scoreData, setActivityState }) {
             {scoreData.walkabilityScore}
             </h2>
             {/* Category Scores */}
-
-
             {scoreData.categoryScores.map((categoryScore, index) => (
                 <CategoryScoreCard categoryScore={categoryScore} key={index} />
             ))}
@@ -50,31 +54,7 @@ function ScoreResultScreen({ scoreData, setActivityState }) {
             Back
             </button>
         </div>
-
     );
 }
 
 export default ScoreResultScreen;
-
-/*
-
-                
-
-
-
-
-                {scoreData.categoryScores.map((categoryScore, index) => <CategoryScoreCard categoryScore={categoryScore} key={index} />)}
-
-
-<div className={clsx("flex flex-col justify-center flex-wrap max-h-full", darkMode ? "bg-gray-800 text-white" : "bg-yellow-500")}>
-            <div className="flex flex-col justify-center items-center">
-                <button onClick={() => setActivityState(0)} className="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Back</button>
-                <h1 className="text-5xl font-bold mt-4">Walkability Score: {scoreData.walkabilityScore}</h1>
-                <div className="grid grid-cols-1 gap-4 w-full place-items-center overflow-y-auto">
-                    {scoreData.categoryScores.map((categoryScore, index) => <CategoryScoreCard categoryScore={categoryScore} key={index} />)}
-                </div>
-                <button onClick={() => setActivityState(0)} className="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Back</button>
-            </div>
-        </div>
-
-*/

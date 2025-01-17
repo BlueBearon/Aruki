@@ -7,9 +7,15 @@ import ErrorScreen from './ErrorScreen.js';
 
 import clsx from "clsx";
 
-
 // Tailwind CSS is enabled
 
+/**
+ * ScoreActivity component handles the different states of the score activity.
+ * It manages the state transitions between the address input, loading, score result, and error screens.
+ *
+ * @component
+ * @returns {JSX.Element} The rendered component.
+ */
 function ScoreActivity() {
 
     const { darkMode } = useContext(DarkModeContext);

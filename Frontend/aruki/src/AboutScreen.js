@@ -4,6 +4,13 @@ import { DarkModeContext } from './BasePage.js';
 import { getImage } from './ImageRetrieval';
 import clsx from 'clsx';
 
+/**
+ * AboutScreen component displays information about the Aruki project,
+ * including its purpose, the developer's personal story, and contact information.
+ *
+ * @component
+ * @returns {JSX.Element} The rendered component.
+ */
 function AboutScreen() {
 
 

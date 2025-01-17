@@ -6,37 +6,23 @@ import scoreImage from './assets/city_background.jpg';
 
 // Tailwind CSS is enabled
 
-function AddressScreen1({ mode, setAddress, setActivityState }) {
-
-    const { darkMode } = useContext(DarkModeContext);
-
-    const [address, setThisAddress] = useState('');
-
-    const submitAddress = () => {
-        setAddress(address);
-        setActivityState(1);
-    }
-
-    return (
-
-        <div className={clsx("flex w-full h-full", darkMode ? "bg-gray-800 text-white" : "bg-red-300")}>
-        
-        </div>
-    );
-
-
-
-}
-
-
-
-
+/**
+ * AddressScreen component
+ * @param {Object} props - Component properties
+ * @param {string} props.mode - The mode of the screen, either 'walk' or 'score'
+ * @param {function} props.setAddress - Function to set the address
+ * @param {function} props.setActivityState - Function to set the activity state
+ * @returns {JSX.Element} The rendered component
+ */
 function AddressScreen({ mode, setAddress, setActivityState }) {
 
     const { darkMode } = useContext(DarkModeContext);
 
     const [address, setThisAddress] = useState('');
 
+    /**
+     * Submits the address and updates the activity state
+     */
     const submitAddress = () => {
 
         setAddress(address);
@@ -83,22 +69,5 @@ function AddressScreen({ mode, setAddress, setActivityState }) {
 
 }
 
-
-/*
-
-
-
-    
-        
-
-
-    
-
-
-
-
-
-
-*/
 
 export default AddressScreen;

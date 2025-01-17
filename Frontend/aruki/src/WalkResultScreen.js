@@ -7,6 +7,17 @@ import clsx from "clsx";
 
 // Tailwind CSS is enabled
 
+/**
+ * WalkResultScreen component displays the results of a walk.
+ * 
+ * @param {Object} props - The properties object.
+ * @param {Object} props.walkData - The data related to the walk.
+ * @param {Location[][]} props.walkData.locations - Array of arrays of locations, each array corresponds to a category.
+ * @param {number[]} props.walkData.viscinities - Array of numbers representing the number of close, medium, and far locations of all categories.
+ * @param {number[][]} props.walkData.viscinitiesByCategories - Array of arrays of numbers representing the number of close, medium, and far locations for each category.
+ * @param {Function} props.setActivityState - Function to set the activity state.
+ * @returns {JSX.Element} The WalkResultScreen component.
+ */
 function WalkResultScreen({ walkData, setActivityState }) {
     
     const { darkMode } = useContext(DarkModeContext);
@@ -18,7 +29,6 @@ function WalkResultScreen({ walkData, setActivityState }) {
 
     // Use CategorySection for each category, only needs to pass the categoryName, locations, and viscinities
     // Category name is displayNames mapped from placeTypes[index]
-    
     
     // Just standard flex
 
@@ -34,9 +44,3 @@ function WalkResultScreen({ walkData, setActivityState }) {
 }
 
 export default WalkResultScreen;
-
-
-/*
-    
-
-*/

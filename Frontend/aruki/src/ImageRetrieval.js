@@ -11,7 +11,12 @@ import parkImage from './assets/park.jpg';
 import schoolImage from './assets/school.jpg';
 import movieTheaterImage from './assets/movie_theater.jpeg';
 
-
+/**
+ * Retrieves the image associated with a given place name.
+ * 
+ * @param {string} placeName - The name of the place to retrieve the image for.
+ * @returns {string} The path to the image associated with the given place name.
+ */
 export function getImage(placeName)
 {
     switch(placeName)

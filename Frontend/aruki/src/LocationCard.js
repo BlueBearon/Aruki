@@ -11,12 +11,18 @@ import clsx from 'clsx';
  * - Yellow for Medium
  * - Red for Far
  * 
- * @param { Location } location
- * @returns LocationCard component that displays the location's name, address, and
+ * @param {Location} location - The location object containing name, address, and distance.
+ * @returns {JSX.Element} LocationCard component that displays the location's name, address, and distance.
  */
 function LocationCard({ location }) {
     const { darkMode } = useContext(DarkModeContext);
 
+    /**
+     * Determines the border color based on the distance.
+     * 
+     * @param {number} distance - The distance to the location.
+     * @returns {string} The CSS class for the border color.
+     */
     const borderColor = (distance) => {
         if (parseDistance(distance) <= CLOSE_DISTANCE) {
             return "border-green-500";
@@ -50,14 +56,3 @@ function LocationCard({ location }) {
 }
 
 export default LocationCard;
-
-
-/*
-
-
-
-
-
-
-
-*/

@@ -4,12 +4,15 @@ import clsx from "clsx";
 import darkModeImage from './assets/dark_mode.svg';
 import lightModeImage from './assets/light-mode.svg';
 
-
-
 // Tailwind CSS is enabled
 
+/**
+ * TopBar component that displays the top navigation bar with mode toggles.
+ * 
+ * @component
+ * @returns {JSX.Element} The rendered component.
+ */
 function TopBar() {
-
     const { darkMode, toggleDarkMode } = useContext(DarkModeContext);
     const { activeMode, toggleActiveMode } = useContext(ActiveModeContext); // "walk", "score", "about"
 

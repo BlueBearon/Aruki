@@ -6,27 +6,27 @@ import clsx from "clsx";
 
 // Tailwind CSS is enabled
 
-
 /**
  * This component is responsible for displaying the loading screen when the user is waiting for the data to be fetched from the API.
  * 
  * The user will only see a loading graphic. In the background:
  * 
- * If activeMode is 'walk', the component will call getLocations() (async) to fetch the data from the API.
- * 
- * If activeMode is 'score', the component will call getScores() (async) to fetch the data from the API.
+ * - If activeMode is 'walk', the component will call getLocations() (async) to fetch the data from the API.
+ * - If activeMode is 'score', the component will call getScores() (async) to fetch the data from the API.
  * 
  * Upon successful fetching of the data, the component will call setData() to set the data to the parent component.
- * 
  * Then, the component will call setActivityState(2) to switch to the next screen.
- * 
  * If there is an error during fetching, the component will call setActivityState(3) to switch to the error screen.
  * 
- * @param {*} param0 
- * @returns 
+ * @component
+ * @param {Object} props - The props for the component.
+ * @param {Function} props.setActivityState - Function to set the activity state.
+ * @param {Function} props.setData - Function to set the fetched data.
+ * @param {Function} props.setErrorData - Function to set the error data.
+ * @param {string} props.address - The address to fetch data for.
+ * @returns {JSX.Element} The loading screen component.
  */
 function LoadingScreen( { setActivityState, setData, setErrorData, address } ) {
-
     const { darkMode } = useContext(DarkModeContext);
     const { activeMode } = useContext(ActiveModeContext);
 
@@ -62,7 +62,6 @@ function LoadingScreen( { setActivityState, setData, setErrorData, address } ) {
             </div>
         </div>
     );
-
 }
 
 export default LoadingScreen;

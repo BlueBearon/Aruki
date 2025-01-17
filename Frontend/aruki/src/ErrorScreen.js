@@ -1,13 +1,17 @@
 import React, { useContext } from 'react';
 import { DarkModeContext } from './BasePage.js';
 
-
-
 // Tailwind CSS is enabled
 
-
+/**
+ * ErrorScreen component displays an error message and a back button.
+ *
+ * @param {Object} props - The component props.
+ * @param {Object} props.errorData - The error data object containing the error message.
+ * @param {Function} props.setActivityState - Function to set the activity state.
+ * @returns {JSX.Element} The rendered component.
+ */
 function ErrorScreen({ errorData, setActivityState }) {
-
     const { darkMode } = useContext(DarkModeContext);
 
     return (

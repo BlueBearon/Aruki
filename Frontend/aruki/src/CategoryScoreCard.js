@@ -5,9 +5,11 @@ import { getImage } from './ImageRetrieval.js';
 import clsx from "clsx";
 
 /**
+ * Component to display a category score card with background image, score, and breakdown of places.
  * 
- * @param { CategoryScore } categoryScore
- * @returns 
+ * @param {Object} props - The properties object.
+ * @param {CategoryScore} props.categoryScore - The category score object containing details about the category and scores.
+ * @returns {JSX.Element} The rendered category score card component.
  */
 function CategoryScoreCard({ categoryScore }) {
     const { darkMode } = useContext(DarkModeContext);
@@ -60,16 +62,3 @@ function CategoryScoreCard({ categoryScore }) {
   
 
 export default CategoryScoreCard;
-
-/*
-
-<h1 className="text-5xl font-bold mb-4">{categoryName}</h1>
-<div className="flex flex-row items-center justify-center">
-        <p className="text-lg text-green-500">{closePlaces}</p>
-        <div className="h-6 w-1 bg-gray-300 mx-2"></div>
-        <p className="text-lg text-yellow-500">{mediumPlaces}</p>
-        <div className="h-6 w-1 bg-gray-300 mx-2"></div>
-        <p className="text-lg text-red-500">{farPlaces}</p>
-</div>
-
-*/

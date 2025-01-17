@@ -8,21 +8,48 @@ import clsx from "clsx";
 
 // Tailwind CSS is enabled
 
+/**
+ * WalkActivity component handles the walk mode activity flow.
+ * It manages different states of the activity and renders corresponding screens.
+ *
+ * @component
+ * @returns {JSX.Element} The rendered component.
+ */
 function WalkActivity() {
 
     const { darkMode } = useContext(DarkModeContext);
 
-    // Activity State (specific to walk mode) 0: start page, awaiting user to type in address | 1: Loading page, fetching data from API | 2: Walk Result page, displaying the results
+    /**
+     * Activity State (specific to walk mode)
+     * 0: start page, awaiting user to type in address
+     * 1: Loading page, fetching data from API
+     * 2: Walk Result page, displaying the results
+     * 3: Error page, displaying error message
+     * 
+     * @type {number}
+     */
     const [activityState, setActivityState] = useState(0);
     
-    // Address State
-    const [address, setAddress] = useState(''); /* String */
+    /**
+     * Address State
+     * 
+     * @type {string}
+     */
+    const [address, setAddress] = useState(''); 
 
-    // Walk Data State
-    const [walkData, setWalkData] = useState(null); /*  {Promise<{locations: Location[][], viscinities: number[], viscinitiesByCategories: number[][]}>} */
+    /**
+     * Walk Data State
+     * 
+     * @type {Promise<{locations: Location[][], viscinities: number[], viscinitiesByCategories: number[][]}> | null}
+     */
+    const [walkData, setWalkData] = useState(null); 
 
-    // Error Data
-    const [errorData, setErrorData] = useState(null); /* Error */
+    /**
+     * Error Data
+     * 
+     * @type {Error | null}
+     */
+    const [errorData, setErrorData] = useState(null); 
     
     return (
         <div className={clsx("flex flex-col justify-center flex-grow max-h-full", darkMode ? "bg-gray-800 text-white" : "bg-white")}>
@@ -35,19 +62,3 @@ function WalkActivity() {
 }
 
 export default WalkActivity;
-
-/*
-
-
-<div className="flex justify-center items-center flex-grow h-max">
-   
-    
-    
-    
-</div>
-
-
-
-
-
-*/

@@ -6,6 +6,15 @@ import clsx from "clsx";
 
 // Tailwind CSS is enabled
 
+/**
+ * Component for displaying a category section with a header and a list of locations.
+ *
+ * @param {Object} props - The component props.
+ * @param {string} props.categoryName - The name of the category.
+ * @param {Array} props.locations - The list of locations to display.
+ * @param {Array} props.viscinities - The list of viscinities to display in the header.
+ * @returns {JSX.Element|null} The rendered component or null if no locations exist.
+ */
 function CategorySection({ categoryName, locations, viscinities }) {
   const { darkMode } = useContext(DarkModeContext);
   const backgroundImage = getImage(categoryName);
@@ -48,29 +57,12 @@ function CategorySection({ categoryName, locations, viscinities }) {
       </div>
       
       <div className="grid grid-cols-1 gap-4 w-full place-items-center overflow-y-auto">
-
-
         {locations.map((location, index) => (
           <LocationCard location={location} key={index} />
         ))}
-
-
-
       </div>
     </div>
   );
 }
 
 export default CategorySection;
-
-
-/*
-
-
-                    
-                    
-
-
-
-
-*/

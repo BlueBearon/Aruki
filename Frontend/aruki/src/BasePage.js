@@ -3,12 +3,25 @@ import React, { useState, createContext, useContext } from 'react';
 import TopBar from './TopBar.js';
 import Content from './Content.js';
 
+/**
+ * Context for managing dark mode state.
+ * @type {React.Context<{darkMode: boolean, toggleDarkMode: function}>}
+ */
 const DarkModeContext = createContext();
+
+/**
+ * Context for managing active mode state.
+ * @type {React.Context<{activeMode: string, toggleActiveMode: function}>}
+ */
 const ActiveModeContext = createContext();
 
+/**
+ * BasePage component that provides the main layout and context providers.
+ * @component
+ * @returns {JSX.Element} The rendered component.
+ */
 function BasePage() {
     const [darkMode, setDarkMode] = useState(false);
-
 
     /**
      * Active Mode State
@@ -18,10 +31,17 @@ function BasePage() {
      */
     const [activeMode, setActiveMode] = useState('walk');
 
+    /**
+     * Toggles the dark mode state.
+     */
     const toggleDarkMode = () => {
         setDarkMode(!darkMode);
     };
 
+    /**
+     * Sets the active mode state.
+     * @param {string} mode - The mode to set as active.
+     */
     const toggleActiveMode = (mode) => {
         setActiveMode(mode);
     }
@@ -40,13 +60,3 @@ function BasePage() {
 
 export { DarkModeContext, ActiveModeContext };
 export default BasePage;
-
-/*
-
-                
-                    
-                    
-                               
-                
-
-*/
