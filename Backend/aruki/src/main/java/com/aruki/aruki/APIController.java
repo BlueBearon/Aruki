@@ -55,47 +55,49 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RestController
 public class APIController {
 
-
-
     @Autowired
     private LocationManager googleMapsAPIManager;
 
     /**
-     * This method is used to check if the API is live.
+     * Checks if the API is live.
      * 
-     * @return ResponseEntity<Map<String, String>> This returns a map with the status of the API.
+     * @return {@code ResponseEntity<Map<String, String>>} A map with the status of the API.
      */
     @GetMapping("/areWeLive")
-    public ResponseEntity<Map<String, String>> areWeLive()
-    {
+    public ResponseEntity<Map<String, String>> areWeLive() {
         return new ResponseEntity<>(Map.of("status", "ok"), HttpStatus.OK);
     }
 
     /**
-     * This method is used to get a list of places, how far away they are from the user, and the category of the place (e.g. restaurant, park, etc.).
+     * Gets a list of places, their distances from the user, and their categories (e.g., restaurant, park).
      * 
-     * Inputs the location pamater into the Google Maps API to get said information
+     * Inputs the location parameter into the Google Maps API to get the information.
      * 
-     * Example Response: { "places": [ { "name": "McDonalds", "distance": "0.5 miles", "category": "restaurant" }, { "name": "Central Park", "distance": "1.2 miles", "category": "park" } ] }
+     * Example Response: 
+     * <pre>
+     * { 
+     *   "places": [ 
+     *     { "name": "McDonalds", "distance": "0.5 miles", "category": "restaurant" }, 
+     *     { "name": "Central Park", "distance": "1.2 miles", "category": "park" } 
+     *   ] 
+     * }
+     * </pre>
      * 
-     * @param location - The location of the user/where the user wants to investigate
-     * @return ResponseEntity<Map<String, String>> - Map containing the list of locations, distances, and categories of the corresponding places.
+     * @param location The location of the user/where the user wants to investigate.
+     * @return {@code ResponseEntity<?>} A map containing the list of locations, distances, and categories of the corresponding places.
      */
     @GetMapping("/getPlaces")
-    public ResponseEntity<?> getPlaces(@RequestParam String location)
-    {
+    public ResponseEntity<?> getPlaces(@RequestParam String location) {
         System.out.println("*********************************");
-        System.out.println("Recieved getPlaces request for location: " + location + "\n");
+        System.out.println("Received getPlaces request for location: " + location + "\n");
 
-        if(!googleMapsAPIManager.locationExists(location))
-        {
+        if (!googleMapsAPIManager.locationExists(location)) {
             System.out.println("Invalid location: " + location);
             System.out.println("*********************************");
             return new ResponseEntity<>(Map.of("status", "invalid location"), HttpStatus.BAD_REQUEST);
         }
 
-
-        try{
+        try {
             List<Location> result = googleMapsAPIManager.getPlaces(location, false);
 
             System.out.println("Successfully retrieved places for location: " + location + "\n");
@@ -103,96 +105,70 @@ public class APIController {
             System.out.println("*********************************");
 
             return ResponseEntity.ok(result);
-        }
-        catch (ApiException e)
-        {
-
+        } catch (ApiException e) {
             System.out.println("API Exception: " + e.getMessage());
             System.out.println("*********************************");
-
-
             return new ResponseEntity<>(Map.of("status", "API Exception"), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        catch (InterruptedException e)
-        {
-
+        } catch (InterruptedException e) {
             System.out.println("Interrupted Exception: " + e.getMessage());
             System.out.println("*********************************");
-
             return new ResponseEntity<>(Map.of("status", "interrupted"), HttpStatus.SERVICE_UNAVAILABLE);
-        }
-        catch (IOException e)
-        {
-
+        } catch (IOException e) {
             System.out.println("IO Exception: " + e.getMessage());
             System.out.println("*********************************");
-
             return new ResponseEntity<>(Map.of("status", "IO Exception"), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        catch (Exception e) {
-
+        } catch (Exception e) {
             System.out.println("Unknown Exception: " + e.getMessage());
             System.out.println("*********************************");
-
             return new ResponseEntity<>(Map.of("status", "unknown error"), HttpStatus.INTERNAL_SERVER_ERROR);
         }
-
     }
 
     /**
-     * This method is used to get the walkability score of a location, as well as the score respective to each category of place.
+     * Gets the walkability score of a location, as well as the score respective to each category of place.
      * 
-     * Inputs the location parameter into the Google Maps API to get said information
+     * Inputs the location parameter into the Google Maps API to get the information.
      * 
-     * Example Response: { "walkability": "7.5", "scores": [ { "category": "restaurant", "score": "8.2", "closePlaces" : "5", "mediumPlaces" : "3", "farPlaces" : "2" }, { "category": "park", "score": "9.1", "closePlaces" : "3", "mediumPlaces" : "4", "farPlaces" : "1" } ] }
+     * Example Response: 
+     * <pre>
+     * { 
+     *   "walkability": "7.5", 
+     *   "scores": [ 
+     *     { "category": "restaurant", "score": "8.2", "closePlaces": "5", "mediumPlaces": "3", "farPlaces": "2" }, 
+     *     { "category": "park", "score": "9.1", "closePlaces": "3", "mediumPlaces": "4", "farPlaces": "1" } 
+     *   ] 
+     * }
+     * </pre>
      * 
-     * @param location - The location of the user/where the user wants to investigate
-     * @return ResponseEntity<Map<String, String>> - Map containing the walkability score of the location, as well as the score respective to each category of place.
+     * @param location The location of the user/where the user wants to investigate.
+     * @return {@code ResponseEntity<?>} A map containing the walkability score of the location, as well as the score respective to each category of place.
      */
     @GetMapping("/getScore")
-    public ResponseEntity<?> getScore(@RequestParam String location)
-    {
-        if(!googleMapsAPIManager.locationExists(location))
-        {
+    public ResponseEntity<?> getScore(@RequestParam String location) {
+        if (!googleMapsAPIManager.locationExists(location)) {
             return new ResponseEntity<>(Map.of("status", "invalid location"), HttpStatus.BAD_REQUEST);
         }
 
-        try
-        {
+        try {
             ScoreResponse places = googleMapsAPIManager.getScore(location, false);
-
             return ResponseEntity.ok(places);
-        }
-        catch (ApiException e)
-        {
+        } catch (ApiException e) {
             return new ResponseEntity<>(Map.of("status", "API Exception"), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        catch (InterruptedException e)
-        {
+        } catch (InterruptedException e) {
             return new ResponseEntity<>(Map.of("status", "interrupted"), HttpStatus.SERVICE_UNAVAILABLE);
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             return new ResponseEntity<>(Map.of("status", "IO Exception"), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             return new ResponseEntity<>(Map.of("status", "unknown error"), HttpStatus.INTERNAL_SERVER_ERROR);
         }
-
     }
-
 
     /**
-     * This method is used to return a placeholder response for endpoints that have not been implemented yet.
+     * Returns a placeholder response for endpoints that have not been implemented yet.
      * 
-     * @return ResponseEntity<Map<String, String>> - Map containing the status of the API.
+     * @return {@code ResponseEntity<Map<String, String>>} A map containing the status of the API.
      */
-    private ResponseEntity<Map<String, String>> notImplementedOverride()
-    {
+    private ResponseEntity<Map<String, String>> notImplementedOverride() {
         return new ResponseEntity<>(Map.of("status", "placeholder"), HttpStatus.OK);
     }
-
-
-    
-    
 }

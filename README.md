@@ -18,6 +18,7 @@
 - [Usage](#usage)
     - [Walk Mode](#walk-mode)
     - [Score Mode](#score-mode)
+- [Screenshots](#screenshots)
 - [License](#license)
 - [Acknowledgments](#acknowledgments)
 - [Contact](#contact)
@@ -35,6 +36,20 @@ The **Aruki Project** promotes walkable urban environments by analyzing the walk
   - Users input an address and a category.
   - The backend analyzes the walkability of the location and generates a comprehensive walkability score.
   - The score includes category-specific walkability metrics.
+
+
+---
+
+## Screenshots
+
+### Home Screen
+![Home Screen](Screenshots/home_screen.png)
+
+### Walk Mode
+![Walk Mode](Screenshots/walk_mode.png)
+
+### Score Mode
+![Score Mode](Screenshots/score_mode.png)
 
 ---
 
@@ -102,7 +117,12 @@ project-root/
    ```
 
 4. Configure the API key:
-   - Add the Google Maps API key to both the backend and frontend configuration files as required.
+   - Create a `.env` file in both the backend and frontend directories.
+   - Add the following environment variables to the `.env` file:
+     ```plaintext
+     API_KEY=your_google_maps_api_key
+     TEST_ADDRESS=your_test_address
+     ```
 
 ---
 
@@ -119,11 +139,6 @@ project-root/
 2. Select "Score Mode."
 3. Input an address.
 4. View the overall walkability score and category-specific metrics.
-
----
-
-## License
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
 ---
 
