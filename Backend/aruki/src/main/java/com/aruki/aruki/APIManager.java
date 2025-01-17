@@ -416,8 +416,8 @@ public class APIManager {
      * 
      * Uses the Geocoding API to get the latitude and longitude of the location. If the location does not exist, the Geocoding API will return an empty array.
      *  
-     * @param location
-     * @return
+     * @param location the location to check
+     * @return true if the location exists, false otherwise
      */
     public boolean locationExists(String location)
     {

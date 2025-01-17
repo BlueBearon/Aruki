@@ -45,7 +45,7 @@ public class ScoreResponse {
     private List<CategoryScore> categoryScores;
 
     /**
-     * Constructs a ScoreResponse with the specified walkability score and category scores.
+     * Constructs a {@code ScoreResponse} with the specified walkability score and category scores.
      *
      * @param walkabilityScore the walkability score of the location
      * @param categoryScores the scores of each category of places
@@ -56,7 +56,7 @@ public class ScoreResponse {
     }
 
     /**
-     * Constructs a ScoreResponse with the specified walkability score.
+     * Constructs a {@code ScoreResponse} with the specified walkability score.
      *
      * @param walkabilityScore the walkability score of the location
      */
@@ -66,7 +66,7 @@ public class ScoreResponse {
     }
 
     /**
-     * Constructs a ScoreResponse with default values.
+     * Constructs a {@code ScoreResponse} with default values.
      */
     public ScoreResponse() {
         this.walkabilityScore = 0;
@@ -137,9 +137,9 @@ public class ScoreResponse {
     }
 
     /**
-     * Returns a string representation of the ScoreResponse in JSON format.
+     * Returns a string representation of the {@code ScoreResponse} in JSON format.
      *
-     * @return a string representation of the ScoreResponse
+     * @return a string representation of the {@code ScoreResponse}
      */
     @Override
     public String toString() {

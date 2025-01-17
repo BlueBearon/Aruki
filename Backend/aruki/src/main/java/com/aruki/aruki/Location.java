@@ -153,23 +153,17 @@ public class Location {
      */
     @Override
     public String toString() {
-
         String typesString = Arrays.toString(types);
-
         return "{\"name\":\"" + name + "\",\"address\":\"" + address + "\",\"types\":" + typesString + ",\"distance\":" + (distance != null ? "\"" + distance + "\"" : null) + "}";
     }
-
 
     /**
      * Parses the distance to a double. The distance is expected to be in the format "123 km" or "123 m" or "123 mi" or "123 ft".
      * 
-     * @param distance
-     * @return
+     * @param distance the distance string to parse
+     * @return the parsed distance as a double
      */
     public static double parseDistance(String distance) {
-        
-        // Remove trailing " km" or " m" or " mi" or etc.
-
         if (distance == null) {
             return 0;
         }
@@ -197,67 +191,100 @@ public class Location {
         return Double.parseDouble(distance);
     }
 
-
+    /**
+     * Compares this location to another location for equality.
+     *
+     * @param location the location to compare to
+     * @return {@code true} if the locations are equal, {@code false} otherwise
+     */
     public boolean equals(Location location) {
         return this.name.equals(location.getName()) && this.address.equals(location.getAddress()) && Arrays.equals(this.types, location.getTypes()) && this.distance.equals(location.getDistance());
     }
 
-    public boolean distanceEquals(Location location){
-
+    /**
+     * Compares the distance of this location to another location for equality.
+     *
+     * @param location the location to compare to
+     * @return {@code true} if the distances are equal, {@code false} otherwise
+     */
+    public boolean distanceEquals(Location location) {
         if (this.distance == null || location.getDistance() == null) {
             return false;
         }
-
         return parseDistance(distance) == parseDistance(location.getDistance());
     }
 
-    public boolean distanceNotEquals(Location location){
-
+    /**
+     * Compares the distance of this location to another location for inequality.
+     *
+     * @param location the location to compare to
+     * @return {@code true} if the distances are not equal, {@code false} otherwise
+     */
+    public boolean distanceNotEquals(Location location) {
         if (this.distance == null || location.getDistance() == null) {
             return false;
         }
-
         return parseDistance(distance) != parseDistance(location.getDistance());
     }
 
+    /**
+     * Checks if the distance of this location is greater than another location.
+     *
+     * @param location the location to compare to
+     * @return {@code true} if this location's distance is greater, {@code false} otherwise
+     */
     public boolean greaterThan(Location location) {
-
         if (this.distance == null || location.getDistance() == null) {
             return false;
         }
-
         return parseDistance(distance) > parseDistance(location.getDistance());
     }
 
+    /**
+     * Checks if the distance of this location is less than another location.
+     *
+     * @param location the location to compare to
+     * @return {@code true} if this location's distance is less, {@code false} otherwise
+     */
     public boolean lessThan(Location location) {
-
         if (this.distance == null || location.getDistance() == null) {
             return false;
         }
-
         return parseDistance(distance) < parseDistance(location.getDistance());
     }
 
+    /**
+     * Checks if the distance of this location is greater than or equal to another location.
+     *
+     * @param location the location to compare to
+     * @return {@code true} if this location's distance is greater than or equal, {@code false} otherwise
+     */
     public boolean greaterThanOrEqualTo(Location location) {
-
         if (this.distance == null || location.getDistance() == null) {
             return false;
         }
-
         return parseDistance(distance) >= parseDistance(location.getDistance());
     }
 
+    /**
+     * Checks if the distance of this location is less than or equal to another location.
+     *
+     * @param location the location to compare to
+     * @return {@code true} if this location's distance is less than or equal, {@code false} otherwise
+     */
     public boolean lessThanOrEqualTo(Location location) {
-
         if (this.distance == null || location.getDistance() == null) {
             return false;
         }
-
         return parseDistance(distance) <= parseDistance(location.getDistance());
     }
 
+    /**
+     * Checks if all fields of this location are null.
+     *
+     * @return {@code true} if all fields are null, {@code false} otherwise
+     */
     public boolean isNull() {
         return this.name == null && this.address == null && this.types == null && this.distance == null;
     }
-    
 }

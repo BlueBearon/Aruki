@@ -22,6 +22,7 @@ import org.springframework.context.annotation.Bean;
  * <p>
  * Example usage:
  * <pre>
+ *     {@code
  *     @Configuration
  *     public class AppConfig {
  *         @Bean
@@ -33,6 +34,7 @@ import org.springframework.context.annotation.Bean;
  *         public APIManager apiManager() {
  *             return new APIManager();
  *         }
+ *     }
  *     }
  * </pre>
  * </p>
@@ -47,20 +49,32 @@ import org.springframework.context.annotation.Bean;
 @Configuration
 public class AppConfig {
 
+    /**
+     * Creates a bean for {@code LocationManager}.
+     *
+     * @return a new instance of {@code LocationManager}
+     */
     @Bean
     public LocationManager googleMapsAPIManager() {
         return new LocationManager();
     }
 
+    /**
+     * Creates a bean for {@code APIManager}.
+     * <p>
+     * This method attempts to create a new instance of {@code APIManager}.
+     * If an exception occurs during instantiation, it prints the error message
+     * and exits the application.
+     * </p>
+     *
+     * @return a new instance of {@code APIManager}, or {@code null} if an error occurs
+     */
     @Bean
     public APIManager apiManager() {
-
-        try
-        {
+        try {
             return new APIManager();
-        } 
-        catch (Exception e) {
-            //print error
+        } catch (Exception e) {
+            // Print error
             System.out.println("Error: " + e.getMessage());
             System.exit(1);
             return null;
