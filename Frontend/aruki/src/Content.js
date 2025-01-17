@@ -14,14 +14,17 @@ function Content() {
     const { activeMode } = useContext(ActiveModeContext);
 
     return (
-        <div className={clsx("flex justify-center h-full w-full", darkMode ? "bg-gray-800 text-white" : "bg-white")}>
-            <div className="flex h-full w-full items-center justify-center">
-                {activeMode === 'walk' && <WalkActivity />}
-                {activeMode === 'score' && <ScoreActivity />}
-                {activeMode === 'about' && <AboutScreen />}
-            </div>
+        <div className={clsx("flex flex-col justify-center flex-grow max-h-9/10 ", darkMode ? "bg-gray-800 text-white" : "bg-white")}>
+            {activeMode === 'walk' && <WalkActivity />}
+            {activeMode === 'score' && <ScoreActivity />}
+            {activeMode === 'about' && <AboutScreen />}
         </div>
     );
 }
 
 export default Content;
+
+/*
+
+
+*/

@@ -9,6 +9,14 @@ module.exports = {
       fontFamily: {
         code: ['Cascadia Code', 'monospace'],
       },
+      height: {
+        '1/10': '10%',
+        '9/10': '90%',
+      },
+      maxHeight: {
+        '9/10': '90%',
+        '1/10': '10%',
+      },
     },
   },
   plugins: [

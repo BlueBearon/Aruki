@@ -6,6 +6,31 @@ import scoreImage from './assets/city_background.jpg';
 
 // Tailwind CSS is enabled
 
+function AddressScreen1({ mode, setAddress, setActivityState }) {
+
+    const { darkMode } = useContext(DarkModeContext);
+
+    const [address, setThisAddress] = useState('');
+
+    const submitAddress = () => {
+        setAddress(address);
+        setActivityState(1);
+    }
+
+    return (
+
+        <div className={clsx("flex w-full h-full", darkMode ? "bg-gray-800 text-white" : "bg-red-300")}>
+        
+        </div>
+    );
+
+
+
+}
+
+
+
+
 function AddressScreen({ mode, setAddress, setActivityState }) {
 
     const { darkMode } = useContext(DarkModeContext);
@@ -18,11 +43,8 @@ function AddressScreen({ mode, setAddress, setActivityState }) {
         setActivityState(1);
     }
     
-
-
     return (
-        <div className={clsx("flex w-full h-screen outline outline-2 rounded-lg p-4 flex-col items-center justify-center", darkMode ? "bg-gray-800 text-white" : "bg-white")} style={{backgroundImage: `url(${mode === 'walk' ? walkImage : scoreImage})`, backgroundSize: 'cover', backgroundPosition: 'center', opacity: 0.7}}>
-
+        <div className={clsx("flex flex-col items-center justify-center flex-grow", darkMode ? "bg-gray-800 text-white" : "bg-white")} style={{backgroundImage: `url(${mode === 'walk' ? walkImage : scoreImage})`, backgroundSize: 'cover', backgroundPosition: 'center', opacity: 0.7}}>
             <div className = {clsx("flex flex-col items-center w-1/2 shadow-lg  border border-gray-300 rounded-lg p-4", darkMode ? "bg-gray-700 text-white" : "bg-white")}>
                 <div className="space-y-4 flex flex-col items-center">
                     <h1 className="text-5xl font-code tracking-wide text-blue-600">Aruki</h1>
@@ -36,6 +58,7 @@ function AddressScreen({ mode, setAddress, setActivityState }) {
                         on the map and the distance from the entered address.
                     </p>
                 </div>
+                
                 <div className="w-full mx-auto flex flex-col items-center">
                     <h1 className="text-2xl">Enter Address</h1>
                     <input 
@@ -58,9 +81,24 @@ function AddressScreen({ mode, setAddress, setActivityState }) {
         </div>
     );
 
-
-
-
 }
+
+
+/*
+
+
+
+    
+        
+
+
+    
+
+
+
+
+
+
+*/
 
 export default AddressScreen;

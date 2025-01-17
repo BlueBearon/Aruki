@@ -23,15 +23,20 @@ function WalkResultScreen({ walkData, setActivityState }) {
     // Just standard flex
 
     return (
-        <div className={clsx("flex flex-grow h-full w-full justify-center items-center", darkMode ? "bg-gray-800 text-white" : "bg-white")}>
-            <div className="flex h-full w-full justify-center items-center">
-                <div className="flex flex-col items-center justify-center">
-                    {walkData.locations.map((locations, index) => <CategorySection categoryName={displayNames[placeTypes[index]]} locations={locations} viscinities={walkData.viscinitiesByCategories[index]} key={index} />)}
-                    <button onClick={() => setActivityState(0)} className="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Back</button>
-                </div>
+        <div className={clsx("flex flex-col flex-wrap max-h-full", darkMode ? "bg-gray-800 text-white" : "bg-white")}>
+            <div className="flex flex-col items-center max-h-full">
+                <button onClick={() => setActivityState(0)} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-1/4">Back</button>
+                {walkData.locations.map((locations, index) => <CategorySection categoryName={displayNames[placeTypes[index]]} locations={locations} viscinities={walkData.viscinitiesByCategories[index]} key={index} />)}
+                <button onClick={() => setActivityState(0)} className="mt-8 mb-8 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-1/4">Back</button>
             </div>
         </div>
     );
 }
 
 export default WalkResultScreen;
+
+
+/*
+    
+
+*/

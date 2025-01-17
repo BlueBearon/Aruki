@@ -1,6 +1,7 @@
 import React, { useContext } from 'react';
 import { DarkModeContext } from './BasePage.js';
 import { CategoryScore, placeTypes, displayNames } from './BackendFunctions.js';
+import { getImage } from './ImageRetrieval.js';
 import clsx from "clsx";
 
 /**
@@ -10,37 +11,65 @@ import clsx from "clsx";
  */
 function CategoryScoreCard({ categoryScore }) {
     const { darkMode } = useContext(DarkModeContext);
-
+  
     let categoryName = categoryScore.category;
     categoryName = displayNames[categoryName];
-    let score = categoryScore.score;
-    let closePlaces = categoryScore.closePlaces;
-    let mediumPlaces = categoryScore.mediumPlaces;
-    let farPlaces = categoryScore.farPlaces;
+    const score = categoryScore.score;
+    const closePlaces = categoryScore.closePlaces;
+    const mediumPlaces = categoryScore.mediumPlaces;
+    const farPlaces = categoryScore.farPlaces;
 
+    let backgroundImage = getImage(categoryName);
+  
     return (
-        <div className={clsx(
-            "flex flex-col items-center justify-center w-full max-w-lg p-6 rounded-xl pt-8",
-            darkMode ? "bg-gray-800 text-white shadow-lg" : "bg-white text-gray-900 shadow-md"
-        )}>
-            <h1 className="text-4xl font-semibold mb-4">{categoryName}</h1>
-            <p className="text-2xl font-bold text-center mb-6">Score: {score}</p>
-            <div className="flex flex-row items-center justify-center space-x-4">
-                <div className="flex items-center">
-                    <div className="h-6 w-6 rounded-full bg-green-500 mr-2"></div>
-                    <p className="text-lg font-medium text-green-500">{closePlaces}</p>
-                </div>
-                <div className="flex items-center">
-                    <div className="h-6 w-6 rounded-full bg-yellow-500 mr-2"></div>
-                    <p className="text-lg font-medium text-yellow-500">{mediumPlaces}</p>
-                </div>
-                <div className="flex items-center">
-                    <div className="h-6 w-6 rounded-full bg-red-500 mr-2"></div>
-                    <p className="text-lg font-medium text-red-500">{farPlaces}</p>
-                </div>
-            </div>
+      <div
+        className="relative flex items-center justify-between w-screen h-[50vh] p-6 overflow-hidden"
+        style={{
+          backgroundImage: `url(${backgroundImage})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
+      >
+        {/* Overlay */}
+        <div className="absolute inset-0 bg-black opacity-40"></div>
+  
+        {/* Content */}
+        <div className="relative flex items-center w-full px-6">
+          {/* Left Side: Category Name */}
+          <h1 className="flex-1 text-6xl font-bold text-white">{categoryName}</h1>
+  
+          {/* Center: Score */}
+          <h2 className="text-6xl font-bold text-white text-center">{score}</h2>
+  
+          {/* Right Side: Breakdown */}
+          <div className="flex-1 flex flex-row items-center justify-end space-x-4">
+            <p className="text-6xl font-bold text-green-400">{closePlaces}</p>
+            <div className="h-20 w-1 bg-gray-300"></div>
+            <p className="text-6xl font-bold text-yellow-400">{mediumPlaces}</p>
+            <div className="h-20 w-1 bg-gray-300"></div>
+            <p className="text-6xl font-bold text-red-400">{farPlaces}</p>
+            <div className="h-20 w-1 bg-gray-300"></div>
+            <p className="text-6xl font-bold text-white">
+              {closePlaces + mediumPlaces + farPlaces}
+            </p>
+          </div>
         </div>
+      </div>
     );
-}
+  }
+  
 
 export default CategoryScoreCard;
+
+/*
+
+<h1 className="text-5xl font-bold mb-4">{categoryName}</h1>
+<div className="flex flex-row items-center justify-center">
+        <p className="text-lg text-green-500">{closePlaces}</p>
+        <div className="h-6 w-1 bg-gray-300 mx-2"></div>
+        <p className="text-lg text-yellow-500">{mediumPlaces}</p>
+        <div className="h-6 w-1 bg-gray-300 mx-2"></div>
+        <p className="text-lg text-red-500">{farPlaces}</p>
+</div>
+
+*/

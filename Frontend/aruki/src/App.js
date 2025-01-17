@@ -6,10 +6,16 @@ import { Route, BrowserRouter as Router } from 'react-router-dom';
 
 function App() {
   return (
-    <div>
+    <div className = "flex flex-col h-screen w-screen bg-red-600">
         <BasePage />
     </div>
   );
 }
 
 export default App;
+
+/*
+
+
+
+*/

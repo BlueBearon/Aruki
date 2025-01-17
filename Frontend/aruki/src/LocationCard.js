@@ -30,7 +30,7 @@ function LocationCard({ location }) {
     return (
         <div className={`${darkMode ? "bg-gray-800 text-white" : "bg-white text-gray-900"} 
                         ${borderColor(location.distance)} border-4 border-solid rounded-lg p-6 m-6 
-                        w-full sm:w-96 shadow-lg transition-all ease-in-out duration-300`}>
+                        w-1/2 shadow-lg transition-all ease-in-out duration-300`}>
             <h1 className="text-3xl font-semibold mb-2">{location.name}</h1>
             <p className="text-lg text-gray-500 mb-4">{location.address}</p>
             <div className="mb-6">
@@ -45,7 +45,19 @@ function LocationCard({ location }) {
                 View on Google Maps
             </a>
         </div>
+        
     );
 }
 
 export default LocationCard;
+
+
+/*
+
+
+
+
+
+
+
+*/

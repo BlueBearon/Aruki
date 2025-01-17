@@ -25,18 +25,29 @@ function WalkActivity() {
     const [errorData, setErrorData] = useState(null); /* Error */
     
     return (
-        <div 
-            className={clsx("flex h-full w-full justify-center items-center overflow-y-auto", darkMode ? "bg-gray-800 text-white" : "bg-white")}
-            
-        >
-            <div className="flex h-full w-full justify-center items-center ">
-                {activityState === 0 && <AddressScreen mode="walk" setAddress={setAddress} setActivityState={setActivityState} />}
-                {activityState === 1 && <LoadingScreen setActivityState={setActivityState} setData={setWalkData} setErrorData={setErrorData} address={address} />}
-                {activityState === 2 && <WalkResultScreen walkData={walkData} setActivityState={setActivityState} />}
-                {activityState === 3 && <ErrorScreen errorData={errorData} setActivityState={setActivityState} />}
-            </div>
+        <div className={clsx("flex flex-col justify-center flex-grow max-h-full", darkMode ? "bg-gray-800 text-white" : "bg-white")}>
+            {activityState === 0 && <AddressScreen mode="walk" setAddress={setAddress} setActivityState={setActivityState} />}
+            {activityState === 1 && <LoadingScreen setActivityState={setActivityState} setData={setWalkData} setErrorData={setErrorData} address={address} />}
+            {activityState === 2 && <WalkResultScreen walkData={walkData} setActivityState={setActivityState} />}
+            {activityState === 3 && <ErrorScreen errorData={errorData} setActivityState={setActivityState} />}
         </div>
     );
 }
 
 export default WalkActivity;
+
+/*
+
+
+<div className="flex justify-center items-center flex-grow h-max">
+   
+    
+    
+    
+</div>
+
+
+
+
+
+*/

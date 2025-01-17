@@ -88,6 +88,11 @@ const getPlaces = async (location) => {
         throw new Error("Location is undefined, is not properly being passed to getPlaces");
     }
 
+    if (location === "test")
+    {
+        location = "1029 Sandoval Drive, Virginia Beach, VA 23454"
+    }
+
 
     console.log("Location sent to getPlaces: " + location);
     try {
@@ -331,6 +336,19 @@ export class ScoreResponse {
  */
 export const getScores = async (location) => {
     try {
+
+        // if location is undefined, throw an error saying as such
+        if (location === undefined)
+        {
+            throw new Error("Location is undefined, is not properly being passed to getPlaces");
+        }
+
+        if (location === "test")
+        {
+            location = "1029 Sandoval Drive, Virginia Beach, VA 23454"
+        }
+
+
         const response = await axios.get(whatIsTheBaseURL() + getScoreURL, {params: {location: location}});
         
         if (!response.data) {

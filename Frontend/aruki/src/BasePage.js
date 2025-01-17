@@ -27,16 +27,26 @@ function BasePage() {
     }
 
     return (
-        <DarkModeContext.Provider value={{ darkMode, toggleDarkMode }}>
-            <ActiveModeContext.Provider value={{ activeMode, toggleActiveMode }}>
-                <div className= "flex flex-col align-items-center h-full w-full">
+        <div className="flex flex-col flex-grow bg-white">
+            <DarkModeContext.Provider value={{ darkMode, toggleDarkMode }}>
+                <ActiveModeContext.Provider value={{ activeMode, toggleActiveMode }}>
                     <TopBar />
-                    <Content />           
-                </div>
-            </ActiveModeContext.Provider>
-        </DarkModeContext.Provider>
+                    <Content />
+                </ActiveModeContext.Provider>
+            </DarkModeContext.Provider>
+        </div>
     );
 }
 
 export { DarkModeContext, ActiveModeContext };
 export default BasePage;
+
+/*
+
+                
+                    
+                    
+                               
+                
+
+*/
