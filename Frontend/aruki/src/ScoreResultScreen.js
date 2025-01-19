@@ -9,6 +9,8 @@ import clsx from "clsx";
 /**
  * Component to display the score results.
  * 
+ * Used in @file ScoreActivity.js
+ * 
  * @param {Object} props - The component props.
  * @param {Object} props.scoreData - The score data.
  * @param {number} props.scoreData.walkabilityScore - The walkability score.

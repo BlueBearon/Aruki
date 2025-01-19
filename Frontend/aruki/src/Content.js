@@ -11,6 +11,8 @@ import clsx from "clsx";
 /**
  * Content component that renders different activities based on the active mode.
  * It also applies dark mode styling based on the context.
+ * 
+ * Used in @file BasePage.js
  *
  * @component
  * @returns {JSX.Element} The rendered component.

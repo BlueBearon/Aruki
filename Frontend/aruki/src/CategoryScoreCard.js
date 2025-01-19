@@ -7,6 +7,8 @@ import clsx from "clsx";
 /**
  * Component to display a category score card with background image, score, and breakdown of places.
  * 
+ * Used in @file ScoreResultScreen.js
+ * 
  * @param {Object} props - The properties object.
  * @param {CategoryScore} props.categoryScore - The category score object containing details about the category and scores.
  * @returns {JSX.Element} The rendered category score card component.

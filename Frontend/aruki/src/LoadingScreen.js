@@ -18,6 +18,9 @@ import clsx from "clsx";
  * Then, the component will call setActivityState(2) to switch to the next screen.
  * If there is an error during fetching, the component will call setActivityState(3) to switch to the error screen.
  * 
+ * 
+ * Used in @file WalkActivity.js @file ScoreActivity.js
+ * 
  * @component
  * @param {Object} props - The props for the component.
  * @param {Function} props.setActivityState - Function to set the activity state.

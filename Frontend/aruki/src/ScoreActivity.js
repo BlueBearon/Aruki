@@ -12,6 +12,8 @@ import clsx from "clsx";
 /**
  * ScoreActivity component handles the different states of the score activity.
  * It manages the state transitions between the address input, loading, score result, and error screens.
+ * 
+ * Used in @file Content.js
  *
  * @component
  * @returns {JSX.Element} The rendered component.

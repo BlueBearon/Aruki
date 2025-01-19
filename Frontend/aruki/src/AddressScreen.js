@@ -8,6 +8,9 @@ import scoreImage from './assets/city_background.jpg';
 
 /**
  * AddressScreen component
+ * 
+ * Used in @file WalkActivity.js @file ScoreActivity.js
+ * 
  * @param {Object} props - Component properties
  * @param {string} props.mode - The mode of the screen, either 'walk' or 'score'
  * @param {function} props.setAddress - Function to set the address

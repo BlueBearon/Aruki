@@ -5,7 +5,10 @@ import { DarkModeContext } from './BasePage.js';
 
 /**
  * ErrorScreen component displays an error message and a back button.
- *
+ * 
+ * 
+ * Used in @file WalkActivity.js @file ScoreActivity.js
+ * 
  * @param {Object} props - The component props.
  * @param {Object} props.errorData - The error data object containing the error message.
  * @param {Function} props.setActivityState - Function to set the activity state.

@@ -8,6 +8,8 @@ import clsx from "clsx";
 
 /**
  * Component for displaying a category section with a header and a list of locations.
+ * 
+ * Used in @file WalkResultScreen.js
  *
  * @param {Object} props - The component props.
  * @param {string} props.categoryName - The name of the category.

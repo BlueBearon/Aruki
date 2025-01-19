@@ -11,6 +11,8 @@ import clsx from "clsx";
 /**
  * WalkActivity component handles the walk mode activity flow.
  * It manages different states of the activity and renders corresponding screens.
+ * 
+ * Used in @file Content.js
  *
  * @component
  * @returns {JSX.Element} The rendered component.

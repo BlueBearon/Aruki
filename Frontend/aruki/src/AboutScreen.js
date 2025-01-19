@@ -7,6 +7,8 @@ import clsx from 'clsx';
 /**
  * AboutScreen component displays information about the Aruki project,
  * including its purpose, the developer's personal story, and contact information.
+ * 
+ * Used in @file Content.js
  *
  * @component
  * @returns {JSX.Element} The rendered component.

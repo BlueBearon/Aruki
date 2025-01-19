@@ -10,6 +10,9 @@ import clsx from "clsx";
 /**
  * WalkResultScreen component displays the results of a walk.
  * 
+ * 
+ * Used in @file WalkActivity.js
+ * 
  * @param {Object} props - The properties object.
  * @param {Object} props.walkData - The data related to the walk.
  * @param {Location[][]} props.walkData.locations - Array of arrays of locations, each array corresponds to a category.

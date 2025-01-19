@@ -17,6 +17,9 @@ const ActiveModeContext = createContext();
 
 /**
  * BasePage component that provides the main layout and context providers.
+ * 
+ * Used in @file App.js
+ * 
  * @component
  * @returns {JSX.Element} The rendered component.
  */

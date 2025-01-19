@@ -11,6 +11,8 @@ import clsx from 'clsx';
  * - Yellow for Medium
  * - Red for Far
  * 
+ * Used in @file CategorySection.js
+ * 
  * @param {Location} location - The location object containing name, address, and distance.
  * @returns {JSX.Element} LocationCard component that displays the location's name, address, and distance.
  */

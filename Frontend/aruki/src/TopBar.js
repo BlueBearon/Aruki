@@ -9,6 +9,8 @@ import lightModeImage from './assets/light-mode.svg';
 /**
  * TopBar component that displays the top navigation bar with mode toggles.
  * 
+ * Used in @file BasePage.js
+ * 
  * @component
  * @returns {JSX.Element} The rendered component.
  */
