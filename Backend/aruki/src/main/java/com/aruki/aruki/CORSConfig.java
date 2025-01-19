@@ -12,7 +12,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class CORSConfig {
 
     /**
-     * Configures CORS settings to allow requests from localhost:3000.
+     * Configures CORS settings to allow requests from localhost:3000 and the live frontend URL.
      *
      * @return a {@link WebMvcConfigurer} with the CORS configuration.
      */
@@ -21,7 +21,8 @@ public class CORSConfig {
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/**").allowedOrigins("http://localhost:3000");
+                registry.addMapping("/**")
+                        .allowedOrigins("http://localhost:3000", "https://arukiurban.netlify.app");
             }
         };
     }
