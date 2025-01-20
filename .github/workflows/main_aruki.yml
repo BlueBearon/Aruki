@@ -31,7 +31,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: java-app
-          path: '${{ github.workspace }}/target/*.jar'
+          path: '${{ github.workspace }}/Backend/aruki/target/*.jar'
 
   deploy:
     runs-on: windows-latest
@@ -40,7 +40,7 @@ jobs:
       name: 'Production'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
     permissions:
-      id-token: write #This is required for requesting the JWT
+      id-token: write # This is required for requesting the JWT
 
     steps:
       - name: Download artifact from build job
@@ -62,4 +62,3 @@ jobs:
           app-name: 'aruki'
           slot-name: 'Production'
           package: '*.jar'
-          
