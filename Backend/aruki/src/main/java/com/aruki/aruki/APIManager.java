@@ -102,38 +102,42 @@ public class APIManager {
 
     public APIManager() throws FileNotFoundException, RuntimeException
     {
-
         this.apiKey = "";
         this.context = null;
 
-        try{
-            // Load the .env file
-            Dotenv dotenv = Dotenv.load();
+        try {
+            // Check if API_KEY is in System.getenv (for Azure deployment)
+            this.apiKey = System.getenv("API_KEY");
 
-            //Check to make sure Dotenv found the .env file
-            if (dotenv == null) {
-                throw new FileNotFoundException("Error: .env file not found. Please create a .env file in the root directory of the project and add the API_KEY variable to it.");
-            }
-            else
-            {
-                System.out.println("Found .env file");
-            }
-
-            this.apiKey = dotenv.get("API_KEY");
-
-            //Check to make sure the API Key was found in the .env file
             if (this.apiKey == null) {
-                throw new RuntimeException("Error: API_KEY not found in .env file. Please add the API_KEY variable to the .env file with your Google Maps API key.");
-            }
-            else
-            {
-                System.out.println("Found API_KEY in .env file");
+                // Load the .env file
+
+                System.out.println("API_KEY not found in System.getenv, attempting to load .env file");
+
+                Dotenv dotenv = Dotenv.load();
+
+                // Check to make sure Dotenv found the .env file
+                if (dotenv == null) {
+                    throw new FileNotFoundException("Error: .env file not found. Please create a .env file in the root directory of the project and add the API_KEY variable to it.");
+                } else {
+                    System.out.println("Found .env file");
+                }
+
+                this.apiKey = dotenv.get("API_KEY");
+
+                // Check to make sure the API Key was found in the .env file
+                if (this.apiKey == null) {
+                    throw new RuntimeException("Error: API_KEY not found in .env file. Please add the API_KEY variable to the .env file with your Google Maps API key.");
+                } else {
+                    System.out.println("Found API_KEY in .env file");
+                }
+            } else {
+                System.out.println("Found API_KEY in System.getenv");
             }
 
             this.context = new GeoApiContext.Builder().apiKey(apiKey).build();
 
-        } catch (Exception e) 
-        {
+        } catch (Exception e) {
             // pass the exception up the chain
             throw e;
         }
