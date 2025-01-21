@@ -145,7 +145,8 @@ public class APIManager {
 
         } catch (Exception e) {
             // pass the exception up the chain
-            throw e;
+            System.out.println("Error: .env file not found. Please create a .env file in the root directory of the project and add the API_KEY variable to it. \n");
+            System.out.println("In case this is the build operation, this program will continue without the API_KEY. However, all API calls will fail. \n");
         }
     }
 
