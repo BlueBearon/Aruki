@@ -99,6 +99,8 @@ public class APIManager {
     private GeoApiContext context;
     private final int searchRadius = 2000; // Search radius in meters
 
+    private boolean API_LOADED = false;
+
 
     public APIManager() throws FileNotFoundException, RuntimeException
     {
@@ -118,7 +120,10 @@ public class APIManager {
 
                 // Check to make sure Dotenv found the .env file
                 if (dotenv == null) {
-                    throw new FileNotFoundException("Error: .env file not found. Please create a .env file in the root directory of the project and add the API_KEY variable to it.");
+                    System.out.println("Error: .env file not found. Please create a .env file in the root directory of the project and add the API_KEY variable to it. \n");
+                    System.out.println("In case this is the build operation, this program will continue without the API_KEY. However, all API calls will fail. \n");
+                    return;
+                    //throw new FileNotFoundException("Error: .env file not found. Please create a .env file in the root directory of the project and add the API_KEY variable to it.");
                 } else {
                     System.out.println("Found .env file");
                 }
@@ -136,6 +141,7 @@ public class APIManager {
             }
 
             this.context = new GeoApiContext.Builder().apiKey(apiKey).build();
+            API_LOADED = true;
 
         } catch (Exception e) {
             // pass the exception up the chain
@@ -165,6 +171,11 @@ public class APIManager {
         else
         {
             try{
+
+                if (!API_LOADED)
+                {
+                    throw new RuntimeException("API_KEY not found. Please add the API_KEY variable to the .env file with your Google Maps API key.");
+                }
 
                 GeocodingResult[] results = GeocodingApi.geocode(context, location).await(); // Get the latitude and longitude of the location
 
@@ -216,6 +227,14 @@ public class APIManager {
 
 
             try {
+
+                if (!API_LOADED)
+                {
+                    throw new RuntimeException("API_KEY not found. Please add the API_KEY variable to the .env file with your Google Maps API key.");
+                }
+
+
+
                 DistanceMatrix matrix = DistanceMatrixApi.newRequest(context) // Get walking distances from the origin address to each destination address
                         .origins(originAddress)
                         .destinations(placeAddresses.toArray(new String[0]))
