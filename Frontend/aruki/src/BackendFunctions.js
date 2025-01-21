@@ -1,8 +1,15 @@
 import axios from 'axios';
 
+/*
+Backend production domain is:
+
+aruki-hhdubgd4gqg6dwgr.eastus-01.azurewebsites.net
+*/
+
 //Java Spring Boot API Backend URL
 const developmentURL = 'http://localhost:8080/';
-const productionURL = '';
+const productionURL = 'https://aruki-hhdubgd4gqg6dwgr.eastus-01.azurewebsites.net/';
+
 const areWeLiveURL = 'areWeLive';
 const getPlacesURL = 'getPlaces';
 const getScoreURL = 'getScore';
