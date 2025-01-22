@@ -23,6 +23,20 @@ function AddressScreen({ mode, setAddress, setActivityState }) {
 
     const [address, setThisAddress] = useState('');
 
+
+    const walkModeMessage = `
+        In Walk Mode, you can enter an address to view a list of locations within walking distance. 
+        These locations are categorized by type, such as restaurants, parks, and schools. Each location
+        will have a colored border (green, yellow, or red) based on its distance from the address, with
+        green being the closest and red being the farthest.
+    `;
+
+    const scoreModeMessage = `
+        In Score Mode, you can enter an address to view a score for that location. 
+        The score is determined by the number of nearby locations, their distances, 
+        and their types. You will also see individual scores for each category of location.
+    `;
+
     /**
      * Submits the address and updates the activity state
      */
@@ -33,7 +47,7 @@ function AddressScreen({ mode, setAddress, setActivityState }) {
     }
     
     return (
-        <div className={clsx("flex flex-col items-center justify-center flex-grow", darkMode ? "bg-gray-800 text-white" : "bg-white")} style={{backgroundImage: `url(${mode === 'walk' ? walkImage : scoreImage})`, backgroundSize: 'cover', backgroundPosition: 'center', opacity: 0.7}}>
+        <div className={clsx("flex flex-col items-center justify-center flex-grow", darkMode ? "bg-gray-800 text-white" : "bg-white")} style={{backgroundImage: `url(${mode === 'walk' ? walkImage : scoreImage})`, backgroundSize: 'cover', backgroundPosition: 'center'}}>
             <div className = {clsx("flex flex-col items-center w-1/2 shadow-lg  border border-gray-300 rounded-lg p-4", darkMode ? "bg-gray-700 text-white" : "bg-white")}>
                 <div className="space-y-4 flex flex-col items-center">
                     <h1 className="text-5xl font-code tracking-wide text-blue-600">Aruki</h1>
@@ -42,9 +56,7 @@ function AddressScreen({ mode, setAddress, setActivityState }) {
                     <h2 className="text-3xl">{mode === 'walk' ? 'Walk Mode' : 'Score Mode'}</h2>
 
                     <p className="text-lg leading-relaxed p-4 ml-5 mr-5">
-                        In Walk Mode, you can enter your address or and address your curious about, and you will be able to see a list of locations that are within walking distance of
-                        that location. These Locations are organized by the type of location they are, such as restaurants, parks, and schools. You will also be able to see each location
-                        on the map and the distance from the entered address.
+                        {mode === 'walk' ? walkModeMessage : scoreModeMessage}
                     </p>
                 </div>
                 
