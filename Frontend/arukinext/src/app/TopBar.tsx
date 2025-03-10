@@ -1,6 +1,7 @@
 import React, { JSX, useContext } from 'react';
 import { DarkModeContext, ActiveModeContext } from './BasePage';
 import clsx from "clsx";
+import Image from 'next/image';
 
 // Tailwind CSS is enabled
 
@@ -51,7 +52,7 @@ function TopBar(): JSX.Element {
             </div>
             {/*Light/Dark mode switch toggle*/}
             <button onClick={toggleDarkMode} className="flex items-center space-x-2 mr-4">
-                {darkMode ? <img src={lightModeImage} className="w-8 h-8 fill-white" alt="Light Mode" /> : <img src={darkModeImage} className="w-8 h-8 fill-black" alt="Dark Mode" />}
+                {darkMode ? <Image src={lightModeImage} width={32} height={32} alt="Light Mode" /> : <Image src={darkModeImage} width={32} height={32} alt="Dark Mode" />}
                 <div className="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
                     <input type="checkbox" name="toggle" id="toggle" checked={darkMode} onChange={toggleDarkMode} className="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer"/>
                     <label htmlFor="toggle" className="toggle-label block overflow-hidden h-6 rounded-full bg-gray-300 cursor-pointer"></label>

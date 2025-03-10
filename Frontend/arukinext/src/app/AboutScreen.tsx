@@ -45,7 +45,7 @@ function AboutScreen(): JSX.Element {
             {/* Personal Story */}
             <h2 className="text-2xl font-semibold mb-4">Why I Created Aruki</h2>
             <p className="text-lg mb-6">
-                After spending several months studying abroad in Japan, I couldn't help but compare the vibrant, walkable urban areas in Japan
+                After spending several months studying abroad in Japan, I could not help but compare the vibrant, walkable urban areas in Japan
                 to the sprawling, car-dependent suburban landscapes I was used to in the United States. This contrast sparked a passion for
                 advocating for better urban planning and more walkable cities. Aruki was born from this experience, with the aim of helping
                 others understand and explore the walkability of their surroundings.

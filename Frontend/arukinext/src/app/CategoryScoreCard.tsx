@@ -1,5 +1,4 @@
-import React, { useContext, JSX } from "react";
-import { DarkModeContext } from "./BasePage";
+import React, { JSX } from "react";
 import { CategoryScore, displayNames } from "./BackendFunctions";
 import { getImage } from "./ImageRetrieval";
 import clsx from "clsx";
@@ -12,14 +11,7 @@ import clsx from "clsx";
  * @returns {JSX.Element} The rendered category score card component.
  */
 function CategoryScoreCard({ categoryScore }: { categoryScore: CategoryScore }): JSX.Element {
-  const darkModeContext = useContext(DarkModeContext);
-
-  if (!darkModeContext) {
-    throw new Error("DarkModeContext must be used within a Provider");
-  }
-
-  const { darkMode } = darkModeContext;
-
+  
   const categoryName = displayNames[categoryScore.category];
   const { score, closePlaces, mediumPlaces, farPlaces } = categoryScore;
   const totalPlaces = closePlaces + mediumPlaces + farPlaces;

@@ -1,5 +1,4 @@
 import walkImage from './assets/city_background.jpg';
-import scoreImage from './assets/city_background.jpg';
 import groceryStoreImage from './assets/grocery_store.jpg';
 import shoppingMallImage from './assets/shopping_mall.jpg';
 import libraryImage from './assets/library.jpg';

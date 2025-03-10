@@ -5,6 +5,9 @@ import LoadingScreen from './LoadingScreen';
 import ScoreResultScreen from './ScoreResultScreen';
 import ErrorScreen from './ErrorScreen';
 import clsx from "clsx";
+import { ScoreResponse, LocationResponse } from './BackendFunctions';
+
+type DataResponse = LocationResponse | ScoreResponse | null;
 
 // Tailwind CSS is enabled
 
@@ -33,7 +36,7 @@ function ScoreActivity(): JSX.Element {
     const [address, setAddress] = useState('');
 
     // Score Data State
-    const [scoreData, setScoreData] = useState<any>(null);
+    const [scoreData, setScoreData] = useState<DataResponse>(null);
 
     // Error Data
     const [errorData, setErrorData] = useState<Error | null>(null);
@@ -42,7 +45,7 @@ function ScoreActivity(): JSX.Element {
         <div className={clsx("flex flex-col justify-center flex-grow max-h-full", darkMode ? "bg-gray-800 text-white" : "bg-white")}>
             {activityState === 0 && <AddressScreen mode="score" setAddress={setAddress} setActivityState={setActivityState} />}
             {activityState === 1 && <LoadingScreen setActivityState={setActivityState} setData={setScoreData} setErrorData={setErrorData} address={address} />}
-            {activityState === 2 && <ScoreResultScreen scoreData={scoreData} setActivityState={setActivityState} />}
+            {activityState === 2 && scoreData && <ScoreResultScreen scoreData={scoreData as ScoreResponse} setActivityState={setActivityState} />}
             {activityState === 3 && errorData && <ErrorScreen errorData={errorData} setActivityState={setActivityState} />}
         </div>
     );

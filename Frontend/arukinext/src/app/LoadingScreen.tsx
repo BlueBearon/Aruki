@@ -1,7 +1,10 @@
 import React, { useContext, useEffect, JSX } from 'react';
 import { DarkModeContext, ActiveModeContext } from './BasePage';
-import { getLocations, getScores } from './BackendFunctions';
+import { getLocations, getScores, LocationResponse, ScoreResponse } from './BackendFunctions';
 import clsx from "clsx";
+
+
+type DataResponse = LocationResponse | ScoreResponse | null;
 
 /**
  * This component is responsible for displaying the loading screen when the user is waiting for the data to be fetched from the API.
@@ -26,7 +29,7 @@ import clsx from "clsx";
  * @param {string} props.address - The address to fetch data for.
  * @returns {JSX.Element} The loading screen component.
  */
-function LoadingScreen({ setActivityState, setData, setErrorData, address }: { setActivityState: (state: number) => void, setData: (data: any) => void, setErrorData: (error: Error) => void, address: string }): JSX.Element {
+function LoadingScreen({ setActivityState, setData, setErrorData, address }: { setActivityState: (state: number) => void, setData: (data: DataResponse) => void, setErrorData: (error: Error) => void, address: string }): JSX.Element {
     const darkModeContext = useContext(DarkModeContext);
     const activeModeContext = useContext(ActiveModeContext);
 
@@ -58,7 +61,7 @@ function LoadingScreen({ setActivityState, setData, setErrorData, address }: { s
         };
     
         fetchData();
-    }, []); // Run only once on mount
+    }, ); // Run only once on mount
 
     // Loading Screen graphic
     return (

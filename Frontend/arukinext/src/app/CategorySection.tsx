@@ -2,6 +2,7 @@ import React, { useContext, JSX } from "react";
 import { DarkModeContext } from "./BasePage";
 import LocationCard from "./LocationCard";
 import { getImage } from "./ImageRetrieval";
+import { Location } from "./BackendFunctions"
 import clsx from "clsx";
 
 /**
@@ -15,7 +16,7 @@ import clsx from "clsx";
  * @param {Array} props.viscinities - The list of viscinities to display in the header.
  * @returns {JSX.Element|null} The rendered component or null if no locations exist.
  */
-function CategorySection({ categoryName, locations, viscinities }: { categoryName: string, locations: any[], viscinities: number[] }): JSX.Element | null {
+function CategorySection({ categoryName, locations, viscinities }: { categoryName: string, locations: Location[], viscinities: number[] }): JSX.Element | null {
   const darkModeContext = useContext(DarkModeContext);
 
   if (!darkModeContext) {
