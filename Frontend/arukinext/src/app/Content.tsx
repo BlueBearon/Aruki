@@ -28,7 +28,7 @@ function Content(): JSX.Element {
     const { activeMode } = activeModeContext;
 
     return (
-        <div className={clsx("flex flex-col justify-center flex-grow max-h-9/10 ", darkMode ? "bg-gray-800 text-white" : "bg-white")}>
+        <div className={clsx("flex flex-col justify-center flex-grow", darkMode ? "bg-gray-800 text-white" : "bg-white")}>
             {activeMode === 'walk' && <WalkActivity />}
             {activeMode === 'score' && <ScoreActivity />}
             {activeMode === 'about' && <AboutScreen />}

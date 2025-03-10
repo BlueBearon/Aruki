@@ -27,28 +27,25 @@ function ScoreResultScreen({ scoreData, setActivityState }: { scoreData: { walka
     return (
         <div className="grid grid-cols-1 w-full place-items-center mt-4 h-full p-4 rounded-l gap-4">
             {/* Back Button */}
-            <button
-                onClick={() => setActivityState(0)}
-                className="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-1/4"
-            >
-                Back
-            </button>
             {/* Title */}
-            <h1 className="text-7xl font-bold text-center mt-8">
+            <h1 className="text-6xl font-bold text-center mt-8">
                 Walkability Score
             </h1>
             {/* Walkability Score */}
-            <h2 className="text-7xl font-bold mt-4 text-center mb-8">
+            <h2 className="text-7xl font-code mt-4 text-center mb-4 p-4 border-2 border-solid rounded-3xl">
                 {scoreData.walkabilityScore}
             </h2>
-            {/* Category Scores */}
-            {scoreData.categoryScores.map((categoryScore, index) => (
-                <CategoryScoreCard categoryScore={categoryScore} key={index} />
-            ))}
+            
+            <div className="grid lg:grid-cols-3 md:grid-cols-1 sm:grid-cols-1 gap-6 w-full place-items-center p-6">
+                {/* Category Scores */}
+                {scoreData.categoryScores.map((categoryScore, index) => (
+                    <CategoryScoreCard categoryScore={categoryScore} key={index} />
+                ))}
+            </div>
             {/* Back Button */}
             <button
                 onClick={() => setActivityState(0)}
-                className="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-1/4"
+                className="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-1/6"
             >
                 Back
             </button>

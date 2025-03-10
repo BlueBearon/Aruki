@@ -43,9 +43,10 @@ function LocationCard({ location }: { location: Location }): JSX.Element {
 
     return (
         <div className={clsx(
-            darkMode ? "bg-gray-800 text-white" : "bg-white text-gray-900",
+            darkMode ? "bg-gray-700 text-white" : "bg-gray-100 text-gray-900",
             borderColor(location.distance),
-            "border-4 border-solid rounded-lg p-6 m-6 w-1/2 shadow-lg transition-all ease-in-out duration-300"
+            "border-2 border-solid rounded-lg p-6 m-6 shadow-2xl transition-transform ease-in-out duration-300 transform hover:scale-105",
+            "w-full h-full justify-between flex flex-col"
         )}>
             <h1 className="text-3xl font-semibold mb-2">{location.name}</h1>
             <p className="text-lg text-gray-500 mb-4">{location.address}</p>
@@ -56,7 +57,7 @@ function LocationCard({ location }: { location: Location }): JSX.Element {
             </div>
             <a href={`https://www.google.com/maps/search/?api=1&query=${location.address}`} 
                target="_blank" rel="noreferrer" 
-               className="mt-4 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg 
+               className="mt-4 bg-blue-600 hover:bg-blue-700 text-white w-55 font-bold py-3 px-6 rounded-lg 
                           transition-colors duration-200 ease-in-out transform hover:scale-105">
                 View on Google Maps
             </a>

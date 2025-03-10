@@ -48,8 +48,8 @@ function AddressScreen({ mode, setAddress, setActivityState }: { mode: string, s
     }
     
     return (
-        <div className={clsx("flex flex-col items-center justify-center flex-grow", darkMode ? "bg-gray-800 text-white" : "bg-white")} style={{backgroundImage: `url(${mode === 'walk' ? walkImage.src : scoreImage.src})`, backgroundSize: 'cover', backgroundPosition: 'center'}}>
-            <div className={clsx("flex flex-col items-center w-1/2 shadow-lg border border-gray-300 rounded-lg p-4", darkMode ? "bg-gray-700 text-white" : "bg-white")}>
+        <div className={clsx("flex flex-col items-center justify-center flex-grow transition-all duration-300", darkMode ? "bg-gray-800 text-white" : "bg-white")} style={{backgroundImage: `url(${mode === 'walk' ? walkImage.src : scoreImage.src})`, backgroundSize: 'cover', backgroundPosition: 'center'}}>
+            <div className={clsx("flex flex-col items-center w-1/2 shadow-lg border border-gray-300 rounded-lg p-4" , darkMode ? "bg-gray-700 text-white" : "bg-white")}>
                 <div className="space-y-4 flex flex-col items-center">
                     <h1 className="text-5xl font-code tracking-wide text-blue-600">Aruki</h1>
                     <h2 className="text-2xl font-code text-blue-600 mb-4">For a Walkable Future</h2>

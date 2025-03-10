@@ -27,7 +27,7 @@ function TopBar(): JSX.Element {
     const { activeMode, toggleActiveMode } = activeModeContext; // "walk", "score", "about"
 
     return (
-        <div className={clsx("flex justify-between p-4 h-[10vh]", darkMode ? "bg-gray-800 text-white" : "bg-white")}>
+        <div className={clsx("flex justify-between p-4", darkMode ? "bg-gray-800 text-white" : "bg-white")}>
             <h1 className="text-3xl text-blue-700 font-code">Aruki</h1>
             <div className={clsx("flex border rounded-full overflow-hidden", darkMode ? "border-gray-700" : "border-gray-300")}>
                 <button 
