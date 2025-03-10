@@ -5,6 +5,11 @@ import LoadingScreen from './LoadingScreen';
 import WalkResultScreen from './WalkResultScreen';
 import ErrorScreen from './ErrorScreen';
 import clsx from "clsx";
+import { ScoreResponse, LocationResponse } from './BackendFunctions';
+
+type DataResponse = LocationResponse | ScoreResponse | null;
+
+
 
 // Tailwind CSS is enabled
 
@@ -49,7 +54,7 @@ function WalkActivity(): JSX.Element {
      * 
      * @type {Promise<{locations: Location[][], viscinities: number[], viscinitiesByCategories: number[][]}> | null}
      */
-    const [walkData, setWalkData] = useState<any>(null); 
+    const [walkData, setWalkData] = useState<DataResponse | null>(null);
 
     /**
      * Error Data
@@ -62,7 +67,7 @@ function WalkActivity(): JSX.Element {
         <div className={clsx("flex flex-col justify-center flex-grow", darkMode ? "bg-gray-800 text-white" : "bg-white")}>
             {activityState === 0 && <AddressScreen mode="walk" setAddress={setAddress} setActivityState={setActivityState} />}
             {activityState === 1 && <LoadingScreen setActivityState={setActivityState} setData={setWalkData} setErrorData={setErrorData} address={address} />}
-            {activityState === 2 && <WalkResultScreen walkData={walkData} setActivityState={setActivityState} />}
+            {activityState === 2 && walkData && <WalkResultScreen walkData={walkData as LocationResponse} setActivityState={setActivityState} />}
             {activityState === 3 && errorData && <ErrorScreen errorData={errorData} setActivityState={setActivityState} />}
         </div>
     );

@@ -1,8 +1,9 @@
 import React, { useContext, JSX } from 'react';
 import { DarkModeContext } from './BasePage';
-import { Location, placeTypes, displayNames } from './BackendFunctions';
+import { LocationResponse , placeTypes, displayNames } from './BackendFunctions';
 import CategorySection from './CategorySection';
 import clsx from "clsx";
+
 
 /**
  * WalkResultScreen component displays the results of a walk.
@@ -18,7 +19,7 @@ import clsx from "clsx";
  * @param {Function} props.setActivityState - Function to set the activity state.
  * @returns {JSX.Element} The WalkResultScreen component.
  */
-function WalkResultScreen({ walkData, setActivityState }: { walkData: { locations: Location[][], viscinities: number[], viscinitiesByCategories: number[][] }, setActivityState: (state: number) => void }): JSX.Element {
+function WalkResultScreen({ walkData, setActivityState }: { walkData: LocationResponse, setActivityState: (state: number) => void }): JSX.Element {
     const darkModeContext = useContext(DarkModeContext);
 
     if (!darkModeContext) {

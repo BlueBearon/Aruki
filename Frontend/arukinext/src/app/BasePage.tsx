@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, createContext, useContext, ReactNode, JSX } from 'react';
+import React, { useState, createContext, JSX } from 'react';
 import clsx from 'clsx';
 
 import TopBar from './TopBar';

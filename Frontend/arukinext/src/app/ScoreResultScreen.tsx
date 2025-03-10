@@ -1,7 +1,6 @@
-import React, { useContext, JSX } from 'react';
-import { DarkModeContext } from './BasePage';
+import React, { JSX } from 'react';
 import CategoryScoreCard from './CategoryScoreCard';
-import clsx from "clsx";
+import { ScoreResponse } from './BackendFunctions';
 
 /**
  * Component to display the score results.
@@ -15,14 +14,7 @@ import clsx from "clsx";
  * @param {Function} props.setActivityState - Function to set the activity state.
  * @returns {JSX.Element} The rendered component.
  */
-function ScoreResultScreen({ scoreData, setActivityState }: { scoreData: { walkabilityScore: number, categoryScores: any[] }, setActivityState: (state: number) => void }): JSX.Element {
-    const darkModeContext = useContext(DarkModeContext);
-
-    if (!darkModeContext) {
-        throw new Error('DarkModeContext must be used within a Provider');
-    }
-
-    const { darkMode } = darkModeContext;
+function ScoreResultScreen({ scoreData, setActivityState }: { scoreData: ScoreResponse, setActivityState: (state: number) => void }): JSX.Element {
 
     return (
         <div className="grid grid-cols-1 w-full place-items-center mt-4 h-full p-4 rounded-l gap-4">

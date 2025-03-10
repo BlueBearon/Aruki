@@ -104,8 +104,8 @@ const getPlaces = async (location: string): Promise<Location[]> => {
             throw new Error("No data received from getPlaces API");
         }
 
-        let locations: Location[] = [];
-        response.data.forEach((locationData: any) => {
+        const locations: Location[] = [];
+        response.data.forEach((locationData: Location) => {
             locations.push(new Location(locationData.name, locationData.address, locationData.types, locationData.distance));
         });
 
@@ -136,8 +136,8 @@ export function parseDistance(distance: string): number {
  * @returns {string} - The distance in miles.
  */
 export function kmToMiles(km: string): string {
-    let kmNumber = parseDistance(km);
-    let milesNumber = kmNumber * 0.621371;
+    const kmNumber = parseDistance(km);
+    const milesNumber = kmNumber * 0.621371;
     return milesNumber.toFixed(2) + " miles";
 }
 
@@ -168,7 +168,7 @@ export function locationDistanceSortDESC(locations: Location[]): void {
  * @returns {Location[][]} - Returns a list of locations for each category.
  */
 function locationCategorySort(locations: Location[], categories: string[]): Location[][] {
-    let sortedLocations: Location[][] = Array(categories.length).fill([]).map(() => []);
+    const sortedLocations: Location[][] = Array(categories.length).fill([]).map(() => []);
 
     locations.forEach(location => {
         categories.forEach((category, index) => {
@@ -192,7 +192,7 @@ function countLocationVicinities(locations: Location[]): number[] {
     let farPlaces = 0;
 
     locations.forEach(location => {
-        let distance = parseDistance(location.distance);
+        const distance = parseDistance(location.distance);
         if (distance <= CLOSE_DISTANCE) {
             closePlaces++;
         } else if (distance <= MEDIUM_DISTANCE) {
@@ -211,7 +211,7 @@ function countLocationVicinities(locations: Location[]): number[] {
  * @returns {number[][]} - Returns a 2D array of the number of locations in each distance vicinity for each category.
  */
 function countLocationVicinitiesByCategories(sortedLocations: Location[][]): number[][] {
-    let viscinities: number[][] = [];
+    const viscinities: number[][] = [];
 
     sortedLocations.forEach(locations => {
         viscinities.push(countLocationVicinities(locations));
@@ -250,6 +250,29 @@ export const displayNames: { [key: string]: string } = {
     "museum": "Museum"
 }
 
+
+/**
+ * Represents the response from the getPlaces API.
+ */
+export class LocationResponse {
+    locations: Location[][];
+    viscinities: number[];
+    viscinitiesByCategories: number[][];
+    
+    /**
+     * @param {Location[][]} locations
+     * @param {number[]} viscinities
+     * @param {number[][]} viscinitiesByCategories
+     */
+    constructor(locations: Location[][], viscinities: number[], viscinitiesByCategories: number[][]) {
+        this.locations = locations;
+        this.viscinities = viscinities;
+        this.viscinitiesByCategories = viscinitiesByCategories;
+    }
+
+}
+
+
 /**
  * Combines all the steps to get the locations, sort them by distance, and sort them by category,
  * counts the number of locations in each distance vicinity, and returns the results.
@@ -259,21 +282,22 @@ export const displayNames: { [key: string]: string } = {
  */
 export const getLocations = async (location: string): Promise<{ locations: Location[][], viscinities: number[], viscinitiesByCategories: number[][] }> => {
     try {
-        let locations = await getPlaces(location);
+        const locations = await getPlaces(location);
 
         // Sort the locations by distance in ascending order
         locationDistanceSortASC(locations);
 
         // Sort the locations by category
-        let sortedLocations = locationCategorySort(locations, placeTypes);
+        const sortedLocations = locationCategorySort(locations, placeTypes);
 
         // Count the number of locations in each distance vicinity
-        let viscinities = countLocationVicinities(locations);
+        const viscinities = countLocationVicinities(locations);
 
         // Count the number of locations in each distance vicinity for each category
-        let viscinitiesByCategories = countLocationVicinitiesByCategories(sortedLocations);
+        const viscinitiesByCategories = countLocationVicinitiesByCategories(sortedLocations);
 
-        return { locations: sortedLocations, viscinities: viscinities, viscinitiesByCategories: viscinitiesByCategories };
+        const response = new LocationResponse(sortedLocations, viscinities, viscinitiesByCategories);
+        return response;
     } catch (error) {
         if (error instanceof Error) {
             console.error("Error checking if API is live:", error.message);
@@ -352,8 +376,8 @@ export const getScores = async (location: string): Promise<ScoreResponse> => {
             throw new Error("No data received from getScore API");
         }
 
-        let categoryScores: CategoryScore[] = [];
-        response.data.categoryScores.forEach((categoryScore: any) => {
+        const categoryScores: CategoryScore[] = [];
+        response.data.categoryScores.forEach((categoryScore: CategoryScore) => {
             categoryScores.push(new CategoryScore(categoryScore.category, categoryScore.score, categoryScore.closePlaces, categoryScore.mediumPlaces, categoryScore.farPlaces));
         });
 

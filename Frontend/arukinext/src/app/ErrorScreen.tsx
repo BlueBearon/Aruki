@@ -1,5 +1,4 @@
-import React, { useContext, JSX } from 'react';
-import { DarkModeContext } from './BasePage';
+import React, { JSX } from 'react';
 
 /**
  * ErrorScreen component displays an error message and a back button.
@@ -13,13 +12,6 @@ import { DarkModeContext } from './BasePage';
  * @returns {JSX.Element} The rendered component.
  */
 function ErrorScreen({ errorData, setActivityState }: { errorData: Error, setActivityState: (state: number) => void }): JSX.Element {
-    const darkModeContext = useContext(DarkModeContext);
-
-    if (!darkModeContext) {
-        throw new Error('DarkModeContext must be used within a Provider');
-    }
-
-    const { darkMode } = darkModeContext;
 
     return (
         <div className="flex h-full w-full justify-center items-center">
