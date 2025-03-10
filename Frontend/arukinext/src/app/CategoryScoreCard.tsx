@@ -1,71 +1,69 @@
-import React, { useContext, JSX } from 'react';
-import { DarkModeContext } from './BasePage';
-import { CategoryScore, displayNames } from './BackendFunctions';
-import { getImage } from './ImageRetrieval';
+import React, { useContext, JSX } from "react";
+import { DarkModeContext } from "./BasePage";
+import { CategoryScore, displayNames } from "./BackendFunctions";
+import { getImage } from "./ImageRetrieval";
 import clsx from "clsx";
 
 /**
- * Component to display a category score card with background image, score, and breakdown of places.
- * 
- * Used in @file ScoreResultScreen.tsx
+ * Displays a category score card with a split background (left: text, right: image).
  * 
  * @param {Object} props - The properties object.
  * @param {CategoryScore} props.categoryScore - The category score object containing details about the category and scores.
  * @returns {JSX.Element} The rendered category score card component.
  */
 function CategoryScoreCard({ categoryScore }: { categoryScore: CategoryScore }): JSX.Element {
-    const darkModeContext = useContext(DarkModeContext);
+  const darkModeContext = useContext(DarkModeContext);
 
-    if (!darkModeContext) {
-        throw new Error('DarkModeContext must be used within a Provider');
-    }
+  if (!darkModeContext) {
+    throw new Error("DarkModeContext must be used within a Provider");
+  }
 
-    const { darkMode } = darkModeContext;
+  const { darkMode } = darkModeContext;
 
-    let categoryName = categoryScore.category;
-    categoryName = displayNames[categoryName];
-    const score = categoryScore.score;
-    const closePlaces = categoryScore.closePlaces;
-    const mediumPlaces = categoryScore.mediumPlaces;
-    const farPlaces = categoryScore.farPlaces;
+  const categoryName = displayNames[categoryScore.category];
+  const { score, closePlaces, mediumPlaces, farPlaces } = categoryScore;
+  const totalPlaces = closePlaces + mediumPlaces + farPlaces;
 
-    let backgroundImage = getImage(categoryName);
+  const backgroundImage = getImage(categoryName);
 
-    return (
-      <div
-        className="relative flex items-center justify-between w-screen h-[50vh] p-6 overflow-hidden"
+  return (
+    <div
+      className={clsx(
+        "relative flex w-full h-full max-w-4xl min-h-72 rounded-3xl shadow-2xl overflow-hidden transition-transform duration-300 transform hover:scale-105 border-1 border-solid"
+      )}
+    >
+      {/* Left Side - Category Name & Score */}
+      <div className="flex flex-col justify-center items-center w-1/2 p-6">
+        <h1 className="lg:text-4xl md:text-3xl font-bold text-center mb-5">{categoryName}</h1>
+        <div className= "p-4 w-3/4">
+          <h2 className="lg:text-5xl md:text-4xl font-code mt-2 text-center">{score}</h2>
+        </div>
+      </div>
+
+      {/* Right Side - Background Image & Breakdown */}
+      <div className="relative flex flex-col justify-center items-center w-1/2 p-6"
         style={{
           backgroundImage: `url(${backgroundImage})`,
           backgroundSize: "cover",
           backgroundPosition: "center",
         }}
       >
-        {/* Overlay */}
-        <div className="absolute inset-0 bg-black opacity-40"></div>
+        {/* Gradient Overlay for readability (fades from left to transparent) */}
+        <div className="absolute inset-0 bg-gradient-to-l from-black/80 to-transparent"></div>
 
-        {/* Content */}
-        <div className="relative flex items-center w-full px-6">
-          {/* Left Side: Category Name */}
-          <h1 className="flex-1 text-6xl font-bold text-white">{categoryName}</h1>
-
-          {/* Center: Score */}
-          <h2 className="text-6xl font-bold text-white text-center">{score}</h2>
-
-          {/* Right Side: Breakdown */}
-          <div className="flex-1 flex flex-row items-center justify-end space-x-4">
-            <p className="text-6xl font-bold text-green-400">{closePlaces}</p>
-            <div className="h-20 w-1 bg-gray-300"></div>
-            <p className="text-6xl font-bold text-yellow-400">{mediumPlaces}</p>
-            <div className="h-20 w-1 bg-gray-300"></div>
-            <p className="text-6xl font-bold text-red-400">{farPlaces}</p>
-            <div className="h-20 w-1 bg-gray-300"></div>
-            <p className="text-6xl font-bold text-white">
-              {closePlaces + mediumPlaces + farPlaces}
-            </p>
-          </div>
+        {/* Score Breakdown */}
+        <div className="relative flex flex-row text-center text-white text-3xl font-bold z-10 p-4">
+          <p className="text-green-400 font- mx-2 lg:text-5xl md:text-4xl">{closePlaces}</p>
+          <div className="w-0.5 h-12 bg-gray-300 mx-2"></div>
+          <p className="text-yellow-400 mx-2 lg:text-5xl md:text-4xl">{mediumPlaces}</p>
+          <div className="w-0.5 h-12 bg-gray-300 mx-2"></div>
+          <p className="text-red-400 mx-2 lg:text-5xl md:text-4xl">{farPlaces}</p>
+          <div className="w-0.5 h-12 bg-gray-300 mx-2 "></div>
+          <p className="text-white mx-2 lg:text-5xl md:text-4xl">{totalPlaces}</p>
         </div>
       </div>
-    );
+    </div>
+  );
 }
 
 export default CategoryScoreCard;

@@ -59,7 +59,7 @@ function WalkActivity(): JSX.Element {
     const [errorData, setErrorData] = useState<Error | null>(null); 
     
     return (
-        <div className={clsx("flex flex-col justify-center flex-grow max-h-full", darkMode ? "bg-gray-800 text-white" : "bg-white")}>
+        <div className={clsx("flex flex-col justify-center flex-grow", darkMode ? "bg-gray-800 text-white" : "bg-white")}>
             {activityState === 0 && <AddressScreen mode="walk" setAddress={setAddress} setActivityState={setActivityState} />}
             {activityState === 1 && <LoadingScreen setActivityState={setActivityState} setData={setWalkData} setErrorData={setErrorData} address={address} />}
             {activityState === 2 && <WalkResultScreen walkData={walkData} setActivityState={setActivityState} />}

@@ -59,7 +59,7 @@ function BasePage(): JSX.Element {
   };
 
   return (
-    <div className= {clsx("flex flex-col flex-grow", darkMode ? "bg-gray-800 text-white" : "bg-white text-black")}>
+    <div className= {clsx("flex flex-col flex-grow min-h-screen", darkMode ? "bg-gray-800 text-white" : "bg-white text-black")}>
       <DarkModeContext.Provider value={{ darkMode, toggleDarkMode }}>
         <ActiveModeContext.Provider value={{ activeMode, toggleActiveMode }}>
           <TopBar />

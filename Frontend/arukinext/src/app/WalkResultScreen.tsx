@@ -28,9 +28,8 @@ function WalkResultScreen({ walkData, setActivityState }: { walkData: { location
     const { darkMode } = darkModeContext;
 
     return (
-        <div className={clsx("flex flex-col flex-wrap max-h-full", darkMode ? "bg-gray-800 text-white" : "bg-white")}>
-            <div className="flex flex-col items-center max-h-full">
-                <button onClick={() => setActivityState(0)} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-1/4">Back</button>
+        <div className={clsx("flex flex-col flex-wrap", darkMode ? "bg-gray-800 text-white" : "bg-white")}>
+            <div className="flex flex-col items-center">
                 {walkData.locations.map((locations, index) => (
                     <CategorySection 
                         categoryName={displayNames[placeTypes[index]]} 
@@ -39,7 +38,7 @@ function WalkResultScreen({ walkData, setActivityState }: { walkData: { location
                         key={index} 
                     />
                 ))}
-                <button onClick={() => setActivityState(0)} className="mt-8 mb-8 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-1/4">Back</button>
+                <button onClick={() => setActivityState(0)} className="mt-8 mb-8 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-1/8">Back</button>
             </div>
         </div>
     );

@@ -66,6 +66,9 @@ function LoadingScreen({ setActivityState, setData, setErrorData, address }: { s
             <div className="flex flex-col items-center">
                 <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-gray-900"></div>
                 <div className={clsx("text-lg", darkMode ? "text-gray-300" : "text-gray-900", "mt-4")}>Loading...</div>
+                <div className={clsx("text-sm", darkMode ? "text-gray-500" : "text-gray-700", "mt-2", "text-center")}>
+                    The first load may take longer than usual as the backend restarts from inactivity.
+                </div>
             </div>
         </div>
     );
